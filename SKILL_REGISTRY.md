@@ -10,7 +10,7 @@ Human-readable mirror of `data/skills.jsonl` (machine source of truth, managed b
 | candidate_evaluation | 1.0.0 | Compare candidate metrics vs baseline → DEPLOY/ROLLBACK/INCONCLUSIVE | ACTIVE, tested |
 | product_scoring | 1.0.0 | Score a problem on 12 discovery dimensions | ACTIVE, tested |
 | skill_creation | 1.0.0 | Register, version, and roll back skills (meta-skill) | ACTIVE, tested |
-| web_research | 0.1.0 | Ingest and evaluate web sources | SPEC ONLY — needs Engine + ingestion |
-| quranic_reference | 0.1.0 | Explainable link from a principle to a Qur'anic basis | SPEC ONLY — must be explainable, never forced |
+| web_research | 0.2.0 | Read a web source → DATA claim with provenance (url, sha256, time); records what it *said*, not that it is true | ACTIVE, tested (`monad/web.py`) — no search, no JS; evaluation with Engine later |
+| quranic_reference | 0.2.0 | Verse-level citable reference: lookup sura:ayah / search term → REVELATION claims | ACTIVE, tested (`monad/quran.py`) — explaining a principle→verse link stays human/engine work |
 
 Template for a new skill: `skills/SKILL_TEMPLATE.md`. Register with `python -m monad skill add <spec.json>`.

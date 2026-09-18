@@ -22,7 +22,8 @@ No version is final. Each is a stage.
 - [ ] Scheduled iterations (Ali can create a scheduled task that re-runs `python -m monad iterate`)
 
 ## v0.3 — World Observer
-- [ ] Source ingestion (web, GitHub, papers) with SOURCE_EVALUATION skill
+- [x] 2026-09-18: first reading (اقرأ) — `monad read <url>` (web_research 0.2.0) and `monad quran` (quranic_reference 0.2.0), engine-free
+- [ ] Source ingestion (web, GitHub, papers) with SOURCE_EVALUATION skill — evaluation part still needs Engine
 - [ ] Automated need/opportunity discovery scoring (Human Need, Truth, Utility, Impact, Feasibility, Cost, Risk, Reach, Urgency)
 - [ ] Contradiction and staleness sweeps over the knowledge store
 

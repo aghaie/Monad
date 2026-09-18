@@ -34,10 +34,19 @@ SKILLS = [
      ["principle"], ["reference + explanation"], ["engine"], ["engine adapter"],
      ["must be explainable; never forced onto technical decisions"], "",
      "every reference has an explanation reviewed by a human", "0.1.0"),
+    # v0.2 — reading skills (اقرأ): engine-free, stdlib only
+    ("web_research", "Read a web source and store what it said as a DATA claim with provenance (url, sha256, time)",
+     ["url"], ["DATA claim with provenance"], ["urllib", "html.parser", "monad.knowledge"], [],
+     ["records what a source said, not whether it is true; no search/query — URL must be given; no JS rendering"],
+     "tests/test_read.py", "every stored claim has url + sha256; staleness 30 days", "0.2.0"),
+    ("quranic_reference", "Verse-level citable reference: lookup sura:ayah or search a term → REVELATION claims",
+     ["sura:ayah | term"], ["REVELATION claims with provenance"], ["monad.quran", "data/quran/quran-simple.csv"], [],
+     ["lookup/search only; explaining a principle→verse link stays human/engine work; never forced onto technical decisions"],
+     "tests/test_read.py", "every returned verse cites tanzil:quran-simple#sura:ayah exactly", "0.2.0"),
 ]
 
 reg = SkillRegistry(ROOT / "data" / "skills.jsonl")
-passed = subprocess.run([sys.executable, "-m", "pytest", "-q", "tests/test_core.py"],
+passed = subprocess.run([sys.executable, "-m", "pytest", "-q", ],
                         cwd=ROOT, capture_output=True).returncode == 0
 for name, purpose, i, o, t, d, lim, tests, ev, ver in SKILLS:
     if reg.get(name, ver):

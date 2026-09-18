@@ -5,10 +5,10 @@ Legend: AVAILABLE = usable today in the builder session or the repo · PARTIAL =
 | Capability | Status | Where | Gap / next step |
 |---|---|---|---|
 | RESEARCH | AVAILABLE (builder session tools) / PARTIAL (in MONAD runtime) | WebSearch/WebFetch in session; `skills/research.md` spec | Runtime needs an Engine + HTTP ingestion skill |
-| WEB_RESEARCH | same as above | | |
+| WEB_RESEARCH | PARTIAL → reading works (iteration 3) | `monad/web.py`, `monad read <url>` | search/discovery of URLs and evaluation of content need Engine |
 | KNOWLEDGE_ACQUISITION | PARTIAL | `monad/knowledge/store.py` | ingestion pipeline from sources |
 | SOURCE_EVALUATION | PARTIAL | claim `confidence` + `provenance` fields | scoring rubric skill |
-| QURANIC_REASONING | PARTIAL | `monad/core/quran_engine.py` checklist | verse-level, explainable reference layer; must never force verses onto technical decisions |
+| QURANIC_REASONING | PARTIAL | `monad/core/quran_engine.py` checklist + `monad/quran.py` verse layer (iteration 3) | explainable principle→verse link; must never force verses onto technical decisions |
 | LOGICAL_REASONING | PARTIAL | origin-class separation in store | formal argument graphs |
 | SCIENTIFIC_REASONING | PARTIAL | HYPOTHESIS → EMPIRICAL_RESULT flow | experiment records |
 | SYSTEM_ANALYSIS | AVAILABLE (this document) | | automate |
@@ -34,5 +34,5 @@ Legend: AVAILABLE = usable today in the builder session or the repo · PARTIAL =
 ## Top gaps ranked by leverage
 1. **Engine adapter wired to a real model** — unlocks autonomous research, skill generation, and product discovery inside the runtime (needs an API key: BLOCKED).
 2. **Git remote + host** — without it, MONAD's memory dies with the sandbox and no product reaches real users (BLOCKED).
-3. **World Observer ingestion** — the runtime cannot yet observe the world on its own.
+3. **World Observer ingestion** — reading a given URL works (2026-09-18); choosing *what* to read and judging it still needs an Engine.
 4. **Real-user measurement** — follows from 2.

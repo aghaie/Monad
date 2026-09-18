@@ -28,11 +28,22 @@ def main(argv: list[str] | None = None) -> int:
         for n in loop.skills.names():
             c = loop.skills.current(n)
             print(f"{n:28s} {c.version if c else '-':8s} {c.status if c else 'ROLLED_BACK'}")
+    elif cmd == "read" and len(argv) >= 2:
+        from monad.web import read_url
+        c = read_url(loop.knowledge, argv[1])
+        print(f"[{c.origin}] {c.text[:200]}\n   source={c.source} tags={c.tags[1:]}")
+    elif cmd == "quran" and len(argv) >= 2:
+        from monad.quran import Quran
+        q = Quran()
+        hits = q.search(" ".join(argv[2:])) if argv[1] == "search" else [q.verse(*map(int, argv[1].split(":")))]
+        for v in hits:
+            print(f"{v.tags[1]:8s} {v.text}")
+        print(f"-- {len(hits)} ayah(s), origin=REVELATION, source={q and 'tanzil:quran-simple'}")
     elif cmd == "contradictions":
         for a, b in loop.knowledge.contradictions():
             print(f"[{a.origin}] {a.text}\n   ⟂ [{b.origin}] {b.text}")
     else:
-        print("usage: python -m monad iterate | status | skills | contradictions | skill add <spec.json>")
+        print("usage: python -m monad iterate | status | skills | contradictions | read <url> | quran <sura:ayah> | quran search <term> | skill add <spec.json>")
         return 1
     return 0
 
