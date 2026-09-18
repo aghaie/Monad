@@ -44,7 +44,7 @@ Model-agnostic · provider-agnostic · self-hostable · portable · versioned ·
 | `monad/core/quran_engine.py` | Quranic Decision Engine: constitutional checklist for significant decisions, returns VALID / INVALID / UNVERIFIED with reasons | RUNNING, tested |
 | `monad/core/loop.py` | Global Creation Loop: one iteration = observe → … → report, with state persisted | RUNNING, tested |
 | `monad/core/engine.py` | Engine adapter interface + NullEngine | RUNNING |
-| `monad/web.py` | World Observer v0.2: read one URL (stdlib), store DATA claim with url + sha256 + staleness | RUNNING, tested |
+| `monad/web.py` | World Observer v0.2: read one URL (stdlib), store DATA claim with url + text-sha256 + staleness; loop re-reads `data/sources.txt` and stores only changes | RUNNING, tested |
 | `monad/quran.py` | Qur'anic reference layer: Tanzil text → REVELATION claims by sura:ayah, term search | RUNNING, tested |
 | `monad/cli.py` | `python -m monad …` | RUNNING |
 

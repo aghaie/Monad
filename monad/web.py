@@ -58,15 +58,20 @@ def fetch(url: str, timeout: int = 20) -> bytes:
         return r.read()
 
 
+def content_sha(raw: bytes) -> str:
+    """Hash of the *extracted text*, not the raw bytes: pages embed volatile tokens
+    (observed on tanzil.net: raw bytes differ every fetch, text does not)."""
+    return "sha256:" + hashlib.sha256(html_to_text(raw.decode("utf-8", errors="replace"))[1].encode()).hexdigest()
+
+
 def read_url(store: KnowledgeStore, url: str, *, fetcher: Callable[[str], bytes] = fetch,
              excerpt_chars: int = 500, expires_days: int = 30) -> Claim:
     """Read one source and record it. The claim text is what the source said (excerpt);
     origin DATA; confidence 1.0 means "this is really what the URL returned", not "it is true"."""
     raw = fetcher(url)
     title, text = html_to_text(raw.decode("utf-8", errors="replace"))
-    digest = hashlib.sha256(raw).hexdigest()
     return store.add(Claim(
         text=f"{title or url} said: {text[:excerpt_chars]}",
         origin="DATA", confidence=1.0, source=url,
-        tags=["web_research", f"sha256:{digest}", f"chars:{len(text)}"],
+        tags=["web_research", content_sha(raw), f"chars:{len(text)}"],
         expires_days=expires_days))

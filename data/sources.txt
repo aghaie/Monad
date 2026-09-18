@@ -1,0 +1,4 @@
+# World Observer sources — one URL per line; re-read every iteration, stored only when content changes.
+# Origin of every stored claim: DATA ("this source said …"), never truth.
+https://tanzil.net/docs/quran_text_types
+https://docs.python.org/3/whatsnew/index.html

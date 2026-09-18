@@ -29,3 +29,26 @@ def test_quran_iqra():
     hits = q.search("اقرأ")
     assert (96, 1) in {tuple(map(int, h.tags[1].split(":"))) for h in hits}
     assert q.search("zzz-not-in-quran") == []
+
+
+def test_loop_reads_sources_only_when_changed(tmp_path, monkeypatch):
+    from monad.core import loop as L
+    (tmp_path / "data").mkdir()
+    (tmp_path / "data" / "sources.txt").write_text("# comment\nhttps://a.test/\nhttps://down.test/\n")
+    pages = {"https://a.test/": b"<p>v1</p>"}
+
+    def fake(url):
+        if url not in pages:
+            raise OSError("unreachable")
+        return pages[url]
+    monkeypatch.setattr(L, "fetch", fake)
+    r1 = L.MonadLoop(tmp_path).iterate()
+    assert r1.observations["sources"]["https://a.test/"] == "new"
+    assert any("down.test" in b for b in r1.blocked)
+    r2 = L.MonadLoop(tmp_path).iterate()
+    assert r2.observations["sources"]["https://a.test/"] == "unchanged"
+    pages["https://a.test/"] = b"<p>v2</p>"
+    r3 = L.MonadLoop(tmp_path).iterate()
+    assert r3.observations["sources"]["https://a.test/"] == "changed"
+    ks = L.MonadLoop(tmp_path).knowledge
+    assert len([c for c in ks.all() if c.source == "https://a.test/"]) == 2  # v1 + v2, no duplicate for unchanged

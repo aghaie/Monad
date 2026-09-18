@@ -1,16 +1,20 @@
 {
-  "iterations": 3,
+  "iterations": 7,
   "last": {
-    "number": 3,
-    "started": "2026-09-18T08:26:58.112007+00:00",
+    "number": 7,
+    "started": "2026-09-18T08:31:26.983123+00:00",
     "engine": "null",
     "observations": {
-      "claims": 8,
+      "claims": 17,
       "skills": 8,
       "active_skills": 8,
       "agents": 0,
       "products": 1,
-      "git_head": "f2c2201"
+      "git_head": "0bbce87",
+      "sources": {
+        "https://tanzil.net/docs/quran_text_types": "unchanged",
+        "https://docs.python.org/3/whatsnew/index.html": "unchanged"
+      }
     },
     "unknowns": [],
     "capability_gaps": [],
@@ -29,8 +33,8 @@
     "learned": [
       "constitutional self-check: UNVERIFIED"
     ],
-    "next_step": "run World Observer against an external source",
+    "next_step": "judge what the sources said (needs Engine); until then: contradictions/staleness sweep",
     "did_real_work": true,
-    "finished": "2026-09-18T08:26:58.125517+00:00"
+    "finished": "2026-09-18T08:31:28.001569+00:00"
   }
 }

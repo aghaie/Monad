@@ -34,5 +34,5 @@ Legend: AVAILABLE = usable today in the builder session or the repo · PARTIAL =
 ## Top gaps ranked by leverage
 1. **Engine adapter wired to a real model** — unlocks autonomous research, skill generation, and product discovery inside the runtime (needs an API key: BLOCKED).
 2. **Git remote + host** — without it, MONAD's memory dies with the sandbox and no product reaches real users (BLOCKED).
-3. **World Observer ingestion** — reading a given URL works (2026-09-18); choosing *what* to read and judging it still needs an Engine.
+3. **World Observer ingestion** — the loop now re-reads `data/sources.txt` every iteration and records changes (2026-09-18); choosing *what* to read and judging it still needs an Engine.
 4. **Real-user measurement** — follows from 2.

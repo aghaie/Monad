@@ -8,7 +8,7 @@ Founder: Ali Aghaei. Constitution: `MONAD_CONSTITUTION.md` (immutable core).
 
 ## Run
 ```
-python3 -m pytest -q          # 16 tests (core + reading + product)
+python3 -m pytest -q          # 17 tests (core + reading + observer + product)
 python3 -m monad iterate      # one cycle of the creation loop + MONAD REPORT
 python3 -m monad status | skills | contradictions
 python3 -m monad read <url>                # اقرأ: read one web source → DATA claim with provenance
@@ -28,6 +28,7 @@ First product: `products/mizan/index.html` — open it in any browser (offline, 
 | monad/ | runtime: knowledge, skills, agents, factory, evaluation, core |
 | data/*.jsonl | append-only memory (claims, skills, agents, products) |
 | data/quran/ | Qur'an text (Tanzil) + manifest — origin REVELATION |
+| data/sources.txt | World Observer sources: re-read every `iterate`, stored only when the text changes |
 | reports/ | MONAD REPORTs and per-iteration JSON |
 | products/ | real products, each with tests |
 

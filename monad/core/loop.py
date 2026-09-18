@@ -19,6 +19,7 @@ from monad.agents import AgentFactory
 from monad.factory import SoftwareFactory
 from monad.core.engine import get_engine
 from monad.core.quran_engine import Decision, check
+from monad.web import content_sha, fetch, read_url
 
 REQUIRED_SKILLS = [
     "claim_classification", "contradiction_detection", "constitutional_check",
@@ -71,6 +72,29 @@ class MonadLoop:
             "git_head": self._git("rev-parse", "--short", "HEAD"),
         }
 
+    def read_sources(self, rec: IterationRecord) -> None:
+        """World Observer v0.2: re-read every URL in data/sources.txt; store a new DATA
+        claim only when the content (sha256) is new or changed. Failures are recorded, not hidden."""
+        path = self.root / "data" / "sources.txt"
+        urls = [l.strip() for l in path.read_text().splitlines()
+                if l.strip() and not l.startswith("#")] if path.exists() else []
+        seen = {}
+        for c in self.knowledge.all():
+            seen.setdefault(c.source, set()).update(t for t in c.tags if t.startswith("sha256:"))
+        rec.observations["sources"] = {}
+        for url in urls:
+            try:
+                raw = fetch(url)
+            except Exception as e:  # network/HTTP error: say so, keep going
+                rec.blocked.append(f"read failed: {url}: {e}")
+                continue
+            sha = content_sha(raw)
+            if sha in seen.get(url, ()):
+                rec.observations["sources"][url] = "unchanged"
+                continue
+            read_url(self.knowledge, url, fetcher=lambda _u, raw=raw: raw)
+            rec.observations["sources"][url] = "changed" if url in seen else "new"
+
     def identify_unknowns(self, rec: IterationRecord) -> None:
         rec.unknowns = [c.text for c in self.knowledge.unknowns()]
         rec.contradictions = len(self.knowledge.contradictions())
@@ -100,16 +124,18 @@ class MonadLoop:
                  f"{rec.contradictions} contradictions, engine={rec.engine}",
             origin="DATA", confidence=1.0, source="monad.core.loop.iterate",
             tags=["self-observation"], expires_days=30))
-        rec.did_real_work = bool(rec.capability_gaps) or bool(rec.products)
+        sources = rec.observations.get("sources", {})
+        rec.did_real_work = bool(rec.capability_gaps) or bool(rec.products) or bool(sources)
         rec.next_step = (
             f"close gap: {rec.capability_gaps[0]}" if rec.capability_gaps
-            else "run World Observer against an external source")
+            else "add sources to data/sources.txt" if not sources
+            else "judge what the sources said (needs Engine); until then: contradictions/staleness sweep")
 
     # ---- driver ------------------------------------------------------------
     def iterate(self) -> IterationRecord:
         n = self.state["iterations"] + 1
         rec = IterationRecord(n, datetime.now(timezone.utc).isoformat(), self.engine.name)
-        for step in (self.observe_world, self.identify_unknowns, self.identify_capability_gaps,
+        for step in (self.observe_world, self.read_sources, self.identify_unknowns, self.identify_capability_gaps,
                      self.select_problem, self.self_check, self.learn):
             step(rec)
         rec.finished = datetime.now(timezone.utc).isoformat()
