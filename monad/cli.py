@@ -41,11 +41,18 @@ def main(argv: list[str] | None = None) -> int:
         print(f"-- {len(hits)} ayah(s), origin=REVELATION, source={q and 'tanzil:quran-simple'}")
     elif cmd == "ask" and len(argv) >= 2:
         print(f"[{loop.engine.name}] " + loop.engine.complete(" ".join(argv[1:])))
+    elif cmd == "ingest":
+        from monad.usage import ingest, newest_export, usage
+        path = Path(argv[1]) if len(argv) >= 2 else newest_export()
+        if not path or not path.exists():
+            print("no export found: in Mizan press «خروجی JSON», then run: python3 -m monad ingest [file]")
+            return 1
+        print(f"ingested {ingest(loop.knowledge, path)} new claim(s) from {path}\nusage: {usage(loop.knowledge)}")
     elif cmd == "contradictions":
         for a, b in loop.knowledge.contradictions():
             print(f"[{a.origin}] {a.text}\n   ⟂ [{b.origin}] {b.text}")
     else:
-        print("usage: python -m monad iterate | status | skills | contradictions | read <url> | quran <sura:ayah> | quran search <term> | ask <prompt> | skill add <spec.json>")
+        print("usage: python -m monad iterate | status | skills | contradictions | read <url> | quran <sura:ayah> | quran search <term> | ask <prompt> | ingest [export.jsonl] | skill add <spec.json>")
         return 1
     return 0
 

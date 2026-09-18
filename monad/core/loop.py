@@ -21,10 +21,12 @@ from monad.core.engine import get_engine
 from monad.evaluation import Metric, evaluate
 from monad.core.quran_engine import Decision, check
 from monad.web import content_sha, fetch, html_to_text, read_url
+from monad.usage import usage
 
 # What "better" means for an iteration, measured against the previous one (Article 14).
 ITERATION_METRICS = [
     Metric("active_skills"), Metric("sources_read"), Metric("products"),
+    Metric("usage_claims"),   # Article 20: real use by real users, ingested from product exports
     Metric("capability_gaps", higher_is_better=False, critical=True),
     Metric("contradictions", higher_is_better=False),
     Metric("stale_claims", higher_is_better=False),
@@ -38,6 +40,7 @@ def iteration_metrics(rec: dict) -> dict[str, float]:
         "active_skills": obs.get("active_skills", 0),
         "sources_read": len([v for v in obs.get("sources", {}).values() if v != "failed"]),
         "products": obs.get("products", 0),
+        "usage_claims": sum(u.get("claims", 0) for u in obs.get("usage", {}).values()),
         "capability_gaps": len(rec.get("capability_gaps", [])),
         "contradictions": rec.get("contradictions", 0),
         "stale_claims": rec.get("stale_claims", 0),
@@ -95,6 +98,7 @@ class MonadLoop:
             "agents": len(self.agents.list()),
             "products": len(self.factory.products()),
             "git_head": self._git("rev-parse", "--short", "HEAD"),
+            "usage": {p.name: usage(self.knowledge, p.name) for p in self.factory.products()},
         }
 
     def read_sources(self, rec: IterationRecord) -> None:
@@ -179,9 +183,11 @@ class MonadLoop:
             tags=["self-observation"], expires_days=30))
         sources = rec.observations.get("sources", {})
         rec.did_real_work = bool(rec.capability_gaps) or bool(rec.products) or bool(sources)
+        no_usage = [p for p, u in rec.observations.get("usage", {}).items() if not u.get("claims")]
         rec.next_step = (
             f"close gap: {rec.capability_gaps[0]}" if rec.capability_gaps
             else "add sources to data/sources.txt" if not sources
+            else f"first real use of {no_usage[0]}: export from the product, then `python3 -m monad ingest`" if no_usage
             else "judge what the sources said (needs Engine); until then: contradictions/staleness sweep")
 
     def compare(self, rec: IterationRecord) -> None:

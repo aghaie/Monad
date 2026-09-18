@@ -20,7 +20,7 @@ Legend: AVAILABLE = usable today in the builder session or the repo · PARTIAL =
 | SECURITY | PARTIAL | no secrets stored; local-only data | threat model per product |
 | DATA_ANALYSIS | AVAILABLE (Python) | | |
 | AUTOMATION | PARTIAL | `python -m monad iterate` | scheduled trigger (needs Ali) |
-| DEPLOYMENT | BLOCKED | no host/remote | Ali supplies host or git remote |
+| DEPLOYMENT | LOCAL | founder decision 2026-09-18: local file is the deployment | public host only if Ali asks |
 | MONITORING | GAP | | after deployment |
 | DOCUMENTATION | AVAILABLE | this repo | |
 | VERSION_CONTROL | AVAILABLE | git + origin github.com/aghaie/Monad (2026-09-18) | |
@@ -33,6 +33,6 @@ Legend: AVAILABLE = usable today in the builder session or the repo · PARTIAL =
 
 ## Top gaps ranked by leverage
 1. **Engine adapter wired to a real model** — unlocks autonomous research, skill generation, and product discovery inside the runtime (needs an API key: BLOCKED).
-2. **Host** — git remote is connected (2026-09-18); a host (even GitHub Pages) is still needed for product 1 to reach real users (BLOCKED).
+2. **Host** — not needed (founder decision 2026-09-18): product 1 reaches its first user as a local file; usage is measured via `monad ingest`.
 3. **World Observer ingestion** — the loop now re-reads `data/sources.txt` every iteration and records changes (2026-09-18); choosing *what* to read and judging it still needs an Engine.
 4. **Real-user measurement** — follows from 2.

@@ -97,3 +97,19 @@ def test_lmstudio_engine_and_judge_step(tmp_path, monkeypatch):
     extracted = [c for c in L.MonadLoop(tmp_path).knowledge.all() if "extracted" in c.tags]
     assert [c.text for c in extracted] == ["https://a.test/ states: The sky is blue", "https://a.test/ states: Water is wet"]
     assert all(c.confidence == 0.6 and c.evidence for c in extracted)
+
+
+# ---- Usage measurement (Article 20) -----------------------------------------
+def test_ingest_is_idempotent_and_measured(tmp_path):
+    from monad.knowledge import KnowledgeStore
+    from monad.usage import ingest, usage
+    ks = KnowledgeStore(tmp_path / "k.jsonl")
+    assert usage(ks) == {"claims": 0}  # no export → no invented usage
+    export = tmp_path / "mizan-knowledge.jsonl"
+    export.write_text('{"id":"a1","text":"این ابزار مفید است","origin":"HYPOTHESIS","confidence":0.5,"source":"علی","evidence":[],"contradicts":[],"tags":[],"status":"OPEN","created":"2026-09-01T00:00:00.000Z","expires_days":null}\n'
+                      '{"id":"b2","text":"این ابزار مفید نیست","origin":"EMPIRICAL_RESULT","confidence":0.7,"source":"نظرسنجی","evidence":[],"contradicts":[],"tags":[],"status":"OPEN","created":"2026-09-02T00:00:00.000Z","expires_days":null}\n')
+    assert ingest(ks, export) == 2
+    assert ingest(ks, export) == 0
+    u = usage(ks)
+    assert u["claims"] == 2 and u["with_source_pct"] == 100 and u["contradictions"] == 1 and u["per_week"] > 0
+    assert "usage:mizan" in ks.get("a1").tags
