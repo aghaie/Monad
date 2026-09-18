@@ -31,7 +31,8 @@ No version is final. Each is a stage.
 ## v0.4 — Self-improvement under measurement
 - [ ] Skill Factory creates skills from capability gaps automatically, with generated tests
 - [ ] Agent Factory spawns specialised agents (Research, Coding, Testing, Security) under constitution
-- [ ] A/B comparison of MONAD versions on a fixed evaluation suite
+- [x] 2026-09-18: every iteration is scored against the previous one (7 metrics, DEPLOY/ROLLBACK/INCONCLUSIVE) — report section 4 is no longer empty
+- [ ] A/B comparison of MONAD *code* versions on a fixed evaluation suite
 
 ## Later
 Telegram interface · API · desktop · local AI runtime · distributed agents · robotics interface

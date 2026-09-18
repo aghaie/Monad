@@ -24,7 +24,7 @@ Legend: AVAILABLE = usable today in the builder session or the repo · PARTIAL =
 | MONITORING | GAP | | after deployment |
 | DOCUMENTATION | AVAILABLE | this repo | |
 | VERSION_CONTROL | AVAILABLE | git | remote BLOCKED |
-| SELF_EVALUATION | PARTIAL | evaluator + reports/ | fixed eval suite |
+| SELF_EVALUATION | PARTIAL | evaluator + reports/; iteration N vs N-1 verdict in every report (2026-09-18) | fixed eval suite for code versions |
 | SELF_IMPROVEMENT | PARTIAL | loop `improve_monad` step records candidates | automated candidate generation needs Engine |
 | REPORTING | AVAILABLE | reports/REPORT_001.md | |
 | SKILL_CREATION | PARTIAL | Skill Factory registry | auto-generation with tests |

@@ -62,3 +62,15 @@ def test_loop_marks_stale_claims(tmp_path):
                                  created="2020-01-01T00:00:00+00:00"))
     r = loop.iterate()
     assert r.stale_claims == 1 and loop.knowledge.get(c.id).status == "STALE"
+
+
+def test_loop_compares_with_previous_iteration(tmp_path, monkeypatch):
+    from monad.core import loop as L
+    monkeypatch.setattr(L, "fetch", lambda u: b"<p>x</p>")
+    r1 = L.MonadLoop(tmp_path).iterate()
+    assert r1.improvement["verdict"] == "INCONCLUSIVE"  # nothing to compare against
+    (tmp_path / "data" / "sources.txt").write_text("https://a.test/\n")
+    r2 = L.MonadLoop(tmp_path).iterate()
+    assert r2.improvement["verdict"] == "DEPLOY" and r2.improvement["deltas"] == {"sources_read": 1}
+    r3 = L.MonadLoop(tmp_path).iterate()
+    assert r3.improvement["verdict"] == "INCONCLUSIVE"  # same as before: no fake progress

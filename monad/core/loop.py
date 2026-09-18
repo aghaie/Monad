@@ -18,8 +18,32 @@ from monad.skills import SkillRegistry
 from monad.agents import AgentFactory
 from monad.factory import SoftwareFactory
 from monad.core.engine import get_engine
+from monad.evaluation import Metric, evaluate
 from monad.core.quran_engine import Decision, check
 from monad.web import content_sha, fetch, read_url
+
+# What "better" means for an iteration, measured against the previous one (Article 14).
+ITERATION_METRICS = [
+    Metric("active_skills"), Metric("sources_read"), Metric("products"),
+    Metric("capability_gaps", higher_is_better=False, critical=True),
+    Metric("contradictions", higher_is_better=False),
+    Metric("stale_claims", higher_is_better=False),
+    Metric("blocked", higher_is_better=False),
+]
+
+
+def iteration_metrics(rec: dict) -> dict[str, float]:
+    obs = rec.get("observations", {})
+    return {
+        "active_skills": obs.get("active_skills", 0),
+        "sources_read": len([v for v in obs.get("sources", {}).values() if v != "failed"]),
+        "products": obs.get("products", 0),
+        "capability_gaps": len(rec.get("capability_gaps", [])),
+        "contradictions": rec.get("contradictions", 0),
+        "stale_claims": rec.get("stale_claims", 0),
+        "blocked": len(rec.get("blocked", [])),
+    }
+
 
 REQUIRED_SKILLS = [
     "claim_classification", "contradiction_detection", "constitutional_check",
@@ -42,6 +66,7 @@ class IterationRecord:
     blocked: list[str] = field(default_factory=list)
     learned: list[str] = field(default_factory=list)
     next_step: str = ""
+    improvement: dict = field(default_factory=dict)   # Article 14: this iteration vs the previous one
     did_real_work: bool = False
     finished: str = ""
 
@@ -135,12 +160,22 @@ class MonadLoop:
             else "add sources to data/sources.txt" if not sources
             else "judge what the sources said (needs Engine); until then: contradictions/staleness sweep")
 
+    def compare(self, rec: IterationRecord) -> None:
+        """Article 14: every version must be comparable with the previous version."""
+        prev = self.state.get("last")
+        if not prev:
+            rec.improvement = {"verdict": "INCONCLUSIVE", "reasons": ["no previous iteration"], "deltas": {}}
+            return
+        v = evaluate(ITERATION_METRICS, iteration_metrics(prev), iteration_metrics(asdict(rec)))
+        rec.improvement = {"verdict": v.decision, "reasons": v.reasons,
+                           "deltas": {k: d for k, d in v.deltas.items() if d}}
+
     # ---- driver ------------------------------------------------------------
     def iterate(self) -> IterationRecord:
         n = self.state["iterations"] + 1
         rec = IterationRecord(n, datetime.now(timezone.utc).isoformat(), self.engine.name)
         for step in (self.observe_world, self.read_sources, self.identify_unknowns, self.identify_capability_gaps,
-                     self.select_problem, self.self_check, self.learn):
+                     self.select_problem, self.self_check, self.learn, self.compare):
             step(rec)
         rec.finished = datetime.now(timezone.utc).isoformat()
         self.state["iterations"] = n
@@ -166,7 +201,7 @@ def report(rec: IterationRecord) -> str:
         f"1. فهمیدم: {rec.observations}",
         f"2. ساختم/بررسی کردم: {len(rec.products)} محصول در خط تولید",
         f"3. قابل استفاده: {[p['name'] for p in rec.products if p['stage'] in ('TEST','SECURITY_REVIEW','USER_EXPERIENCE','DEPLOYMENT','OBSERVATION','IMPROVEMENT')]}",
-        f"4. بهتر شد: —",
+        f"4. بهتر شد: {rec.improvement.get('verdict')} {rec.improvement.get('deltas') or rec.improvement.get('reasons')}",
         f"5. شکست/مسدود: {rec.blocked}",
         f"6. یاد گرفتم: {rec.learned}; شکاف‌ها: {rec.capability_gaps}",
         f"7. قدم بعد: {rec.next_step}",

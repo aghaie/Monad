@@ -8,7 +8,7 @@ Founder: Ali Aghaei. Constitution: `MONAD_CONSTITUTION.md` (immutable core).
 
 ## Run
 ```
-python3 -m pytest -q          # 17 tests (core + reading + observer + product)
+python3 -m pytest -q          # 18 tests (core + reading + observer + comparison + product)
 python3 -m monad iterate      # one cycle of the creation loop + MONAD REPORT
 python3 -m monad status | skills | contradictions
 python3 -m monad read <url>                # اقرأ: read one web source → DATA claim with provenance
