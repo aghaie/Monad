@@ -52,3 +52,13 @@ def test_loop_reads_sources_only_when_changed(tmp_path, monkeypatch):
     assert r3.observations["sources"]["https://a.test/"] == "changed"
     ks = L.MonadLoop(tmp_path).knowledge
     assert len([c for c in ks.all() if c.source == "https://a.test/"]) == 2  # v1 + v2, no duplicate for unchanged
+
+
+def test_loop_marks_stale_claims(tmp_path):
+    from monad.core.loop import MonadLoop
+    from monad.knowledge import Claim
+    loop = MonadLoop(tmp_path)
+    c = loop.knowledge.add(Claim(text="old price", origin="DATA", source="s", expires_days=1,
+                                 created="2020-01-01T00:00:00+00:00"))
+    r = loop.iterate()
+    assert r.stale_claims == 1 and loop.knowledge.get(c.id).status == "STALE"

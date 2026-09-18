@@ -1,16 +1,16 @@
 {
-  "iterations": 7,
+  "iterations": 8,
   "last": {
-    "number": 7,
-    "started": "2026-09-18T08:31:26.983123+00:00",
+    "number": 8,
+    "started": "2026-09-18T08:33:25.885680+00:00",
     "engine": "null",
     "observations": {
-      "claims": 17,
+      "claims": 18,
       "skills": 8,
       "active_skills": 8,
       "agents": 0,
       "products": 1,
-      "git_head": "0bbce87",
+      "git_head": "35dc7c6",
       "sources": {
         "https://tanzil.net/docs/quran_text_types": "unchanged",
         "https://docs.python.org/3/whatsnew/index.html": "unchanged"
@@ -35,6 +35,6 @@
     ],
     "next_step": "judge what the sources said (needs Engine); until then: contradictions/staleness sweep",
     "did_real_work": true,
-    "finished": "2026-09-18T08:31:28.001569+00:00"
+    "finished": "2026-09-18T08:33:26.930989+00:00"
   }
 }

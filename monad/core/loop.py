@@ -98,7 +98,11 @@ class MonadLoop:
     def identify_unknowns(self, rec: IterationRecord) -> None:
         rec.unknowns = [c.text for c in self.knowledge.unknowns()]
         rec.contradictions = len(self.knowledge.contradictions())
-        rec.stale_claims = len(self.knowledge.stale())
+        stale = self.knowledge.stale()
+        rec.stale_claims = len(stale)
+        for c in stale:  # staleness sweep: mark, never delete (append-only memory)
+            if c.status != "STALE":
+                self.knowledge.update(c.id, status="STALE")
 
     def identify_capability_gaps(self, rec: IterationRecord) -> None:
         rec.capability_gaps = self.skills.gaps(REQUIRED_SKILLS)
