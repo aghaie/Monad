@@ -21,7 +21,7 @@ from monad.core.engine import get_engine
 from monad.evaluation import Metric, evaluate
 from monad.core.quran_engine import Decision, check
 from monad.web import content_sha, fetch, html_to_text, read_url
-from monad.usage import usage
+from monad.usage import ingest, usage
 
 # What "better" means for an iteration, measured against the previous one (Article 14).
 ITERATION_METRICS = [
@@ -98,8 +98,14 @@ class MonadLoop:
             "agents": len(self.agents.list()),
             "products": len(self.factory.products()),
             "git_head": self._git("rev-parse", "--short", "HEAD"),
-            "usage": {p.name: usage(self.knowledge, p.name) for p in self.factory.products()},
+            "usage": {p.name: self._usage(p.name) for p in self.factory.products()},
         }
+
+    def _usage(self, product: str) -> dict:
+        snap = self.root / "data" / "usage" / f"{product}.jsonl"
+        if snap.exists():
+            ingest(self.knowledge, snap, product)  # idempotent: `serve` usually ingested already
+        return usage(self.knowledge, product)
 
     def read_sources(self, rec: IterationRecord) -> None:
         """World Observer v0.2: re-read every URL in data/sources.txt; store a new DATA

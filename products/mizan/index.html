@@ -41,7 +41,7 @@
 </head>
 <body>
 <header>
-  <h1>میزان <small>MIZAN · claim &amp; evidence ledger · v0.1</small></h1>
+  <h1>میزان <small>MIZAN · claim &amp; evidence ledger · v0.2</small> <span id="sync" class="tag" hidden></span></h1>
   <div class="sub">داده، تحلیل، فرضیه و نتیجه را از هم جدا نگه دار. هر ادعا یک منشأ دارد. تناقض‌ها پنهان نمی‌شوند.</div>
 </header>
 <main>
@@ -97,7 +97,13 @@ const uid = () => Math.random().toString(16).slice(2,14);
 let claims = [];
 const KEY = "mizan.claims.v1";
 function load(){ try{ const r=localStorage.getItem(KEY); if(r) claims=JSON.parse(r);}catch(e){} }
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(claims)); }catch(e){} }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(claims)); }catch(e){} sync(); }
+// served by `python3 -m monad serve` → every change lands in MONAD's data/ (real usage, Article 20). file:// → export button.
+let syncT; function sync(){ if(!/^https?:/.test(location.protocol)) return; clearTimeout(syncT); syncT=setTimeout(async()=>{
+  const el=document.getElementById("sync"); el.hidden=false;
+  try{ const r=await fetch("/sync",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(claims)}); const u=await r.json();
+       el.textContent=`همگام با MONAD ✓ ${u.claims} ادعا`; el.className="tag o"; }
+  catch(e){ el.textContent="همگام‌سازی ناموفق"; el.className="tag c"; } },300); }
 
 function findContradictions(c){
   const k=norm(c.text), n=hasNeg(c.text);

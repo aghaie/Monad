@@ -41,6 +41,9 @@ def main(argv: list[str] | None = None) -> int:
         print(f"-- {len(hits)} ayah(s), origin=REVELATION, source={q and 'tanzil:quran-simple'}")
     elif cmd == "ask" and len(argv) >= 2:
         print(f"[{loop.engine.name}] " + loop.engine.complete(" ".join(argv[1:])))
+    elif cmd == "serve":
+        from monad.serve import serve
+        serve(ROOT, int(argv[1]) if len(argv) >= 2 else 8765)
     elif cmd == "ingest":
         from monad.usage import ingest, newest_export, usage
         path = Path(argv[1]) if len(argv) >= 2 else newest_export()
@@ -52,7 +55,7 @@ def main(argv: list[str] | None = None) -> int:
         for a, b in loop.knowledge.contradictions():
             print(f"[{a.origin}] {a.text}\n   ⟂ [{b.origin}] {b.text}")
     else:
-        print("usage: python -m monad iterate | status | skills | contradictions | read <url> | quran <sura:ayah> | quran search <term> | ask <prompt> | ingest [export.jsonl] | skill add <spec.json>")
+        print("usage: python -m monad iterate | status | skills | contradictions | read <url> | quran <sura:ayah> | quran search <term> | ask <prompt> | serve [port] | ingest [export.jsonl] | skill add <spec.json>")
         return 1
     return 0
 

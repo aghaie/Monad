@@ -8,15 +8,16 @@ Founder: Ali Aghaei. Constitution: `MONAD_CONSTITUTION.md` (immutable core).
 
 ## Run
 ```
-python3 -m pytest -q          # 20 tests (core + reading + observer + comparison + product)
+python3 -m pytest -q          # 21 tests (core + reading + observer + comparison + product)
 python3 -m monad iterate      # one cycle of the creation loop + MONAD REPORT
 python3 -m monad status | skills | contradictions
 python3 -m monad read <url>                # اقرأ: read one web source → DATA claim with provenance
 python3 -m monad quran 96:1 | quran search اقرأ   # verse-level REVELATION reference
-python3 -m monad ingest [export.jsonl]     # real usage: Mizan «خروجی JSON» (default: newest in ~/Downloads) → knowledge store
+python3 -m monad serve                     # Mizan at http://127.0.0.1:8765 — every change syncs into data/ (real usage, zero steps)
+python3 -m monad ingest [export.jsonl]     # fallback when opened as file://: Mizan «خروجی JSON» (default: newest in ~/Downloads)
 python3 scripts/seed_skills.py
 ```
-First product: `products/mizan/index.html` — open it in any browser (offline, no server). That file *is* the deployment (local, by founder decision). Press «خروجی JSON» now and then, run `python3 -m monad ingest`: that is how MONAD measures real use.
+First product: `products/mizan/index.html` — open it in any browser (offline, no server). That file *is* the deployment (local, by founder decision). Easiest: `python3 -m monad serve` and open http://127.0.0.1:8765 — every claim you log lands in `data/usage/mizan.jsonl` and the knowledge store (tag `usage:mizan`). That is how MONAD measures real use.
 
 ## Map
 | File | What |

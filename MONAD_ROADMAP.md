@@ -17,7 +17,7 @@ No version is final. Each is a stage.
 - [x] 2026-09-18: git remote https://github.com/aghaie/Monad.git — history now lives outside the sandbox
 - [x] 2026-09-18: founder decision — no online host; product 1 is deployed as a local file (Pages workflow removed)
 - [ ] Wire a real Engine adapter (needs an API key from Ali) — provider-agnostic interface already exists
-- [ ] Web UI (Flask) for the first product, Persian RTL
+- [x] 2026-09-18: `monad serve` (stdlib http.server, no Flask) — Mizan on localhost with zero-step usage sync (`POST /sync`); verified end-to-end in Chromium
 - [x] 2026-09-18: usage hook — Mizan export → `python3 -m monad ingest` → claims tagged `usage:mizan` → `usage` in every iteration + `usage_claims` metric (0 until Ali exports for real)
 - [ ] Scheduled iterations (Ali can create a scheduled task that re-runs `python -m monad iterate`)
 

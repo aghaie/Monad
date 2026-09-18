@@ -113,3 +113,25 @@ def test_ingest_is_idempotent_and_measured(tmp_path):
     u = usage(ks)
     assert u["claims"] == 2 and u["with_source_pct"] == 100 and u["contradictions"] == 1 and u["per_week"] > 0
     assert "usage:mizan" in ks.get("a1").tags
+
+
+def test_serve_sync_snapshots_and_ingests(tmp_path):
+    import json, threading, urllib.request
+    from monad.serve import make_server
+    (tmp_path / "products" / "mizan").mkdir(parents=True)
+    (tmp_path / "products" / "mizan" / "index.html").write_text("<h1>mizan</h1>")
+    srv = make_server(tmp_path, 0)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    try:
+        base = f"http://127.0.0.1:{srv.server_port}"
+        get = urllib.request.build_opener(urllib.request.ProxyHandler({})).open  # macOS system proxy must not swallow loopback
+        assert b"mizan" in get(base + "/").read()
+        rows = [{"id": "q1", "text": "x", "origin": "UNKNOWN", "confidence": 0.1, "source": "", "evidence": [],
+                 "contradicts": [], "tags": [], "status": "OPEN", "created": "2026-09-18T00:00:00.000Z", "expires_days": None}]
+        req = urllib.request.Request(base + "/sync", data=json.dumps(rows).encode(), method="POST")
+        out = json.load(get(req))
+        assert out["ingested"] == 1 and out["claims"] == 1
+        assert json.load(get(req))["ingested"] == 0  # idempotent
+        assert (tmp_path / "data" / "usage" / "mizan.jsonl").read_text().count("\n") == 1
+    finally:
+        srv.shutdown()
