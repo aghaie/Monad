@@ -14,7 +14,7 @@ No version is final. Each is a stage.
 - [x] MONAD REPORT 001
 
 ## v0.2 — First real users
-- [ ] BLOCKED→needs Ali: git remote (GitHub) so history leaves the sandbox
+- [x] 2026-09-18: git remote https://github.com/aghaie/Monad.git — history now lives outside the sandbox
 - [ ] BLOCKED→needs Ali: a host (VPS / Cloudflare / Vercel) for public release of product 1
 - [ ] Wire a real Engine adapter (needs an API key from Ali) — provider-agnostic interface already exists
 - [ ] Web UI (Flask) for the first product, Persian RTL

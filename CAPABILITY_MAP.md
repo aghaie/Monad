@@ -23,7 +23,7 @@ Legend: AVAILABLE = usable today in the builder session or the repo · PARTIAL =
 | DEPLOYMENT | BLOCKED | no host/remote | Ali supplies host or git remote |
 | MONITORING | GAP | | after deployment |
 | DOCUMENTATION | AVAILABLE | this repo | |
-| VERSION_CONTROL | AVAILABLE | git | remote BLOCKED |
+| VERSION_CONTROL | AVAILABLE | git + origin github.com/aghaie/Monad (2026-09-18) | |
 | SELF_EVALUATION | PARTIAL | evaluator + reports/; iteration N vs N-1 verdict in every report (2026-09-18) | fixed eval suite for code versions |
 | SELF_IMPROVEMENT | PARTIAL | loop `improve_monad` step records candidates | automated candidate generation needs Engine |
 | REPORTING | AVAILABLE | reports/REPORT_001.md | |
@@ -33,6 +33,6 @@ Legend: AVAILABLE = usable today in the builder session or the repo · PARTIAL =
 
 ## Top gaps ranked by leverage
 1. **Engine adapter wired to a real model** — unlocks autonomous research, skill generation, and product discovery inside the runtime (needs an API key: BLOCKED).
-2. **Git remote + host** — without it, MONAD's memory dies with the sandbox and no product reaches real users (BLOCKED).
+2. **Host** — git remote is connected (2026-09-18); a host (even GitHub Pages) is still needed for product 1 to reach real users (BLOCKED).
 3. **World Observer ingestion** — the loop now re-reads `data/sources.txt` every iteration and records changes (2026-09-18); choosing *what* to read and judging it still needs an Engine.
 4. **Real-user measurement** — follows from 2.
