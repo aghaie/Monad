@@ -1,19 +1,20 @@
 {
-  "iterations": 9,
+  "iterations": 10,
   "last": {
-    "number": 9,
-    "started": "2026-09-18T08:35:45.216358+00:00",
+    "number": 10,
+    "started": "2026-09-18T08:57:31.361337+00:00",
     "engine": "null",
     "observations": {
-      "claims": 19,
+      "claims": 20,
       "skills": 8,
       "active_skills": 8,
       "agents": 0,
       "products": 1,
-      "git_head": "df91215",
+      "git_head": "b0b693f",
       "sources": {
         "https://tanzil.net/docs/quran_text_types": "unchanged",
-        "https://docs.python.org/3/whatsnew/index.html": "unchanged"
+        "https://docs.python.org/3/whatsnew/index.html": "changed",
+        "https://tanzil.net/docs/download": "new"
       }
     },
     "unknowns": [],
@@ -35,13 +36,15 @@
     ],
     "next_step": "judge what the sources said (needs Engine); until then: contradictions/staleness sweep",
     "improvement": {
-      "verdict": "INCONCLUSIVE",
+      "verdict": "DEPLOY",
       "reasons": [
-        "no measurable change"
+        "all measured metrics improved or held"
       ],
-      "deltas": {}
+      "deltas": {
+        "sources_read": 1
+      }
     },
     "did_real_work": true,
-    "finished": "2026-09-18T08:35:46.313160+00:00"
+    "finished": "2026-09-18T08:57:33.133575+00:00"
   }
 }

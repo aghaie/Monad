@@ -20,7 +20,7 @@ from monad.factory import SoftwareFactory
 from monad.core.engine import get_engine
 from monad.evaluation import Metric, evaluate
 from monad.core.quran_engine import Decision, check
-from monad.web import content_sha, fetch, read_url
+from monad.web import content_sha, fetch, html_to_text, read_url
 
 # What "better" means for an iteration, measured against the previous one (Article 14).
 ITERATION_METRICS = [
@@ -72,7 +72,7 @@ class IterationRecord:
 
 
 class MonadLoop:
-    def __init__(self, root: str | Path, engine: str = "null"):
+    def __init__(self, root: str | Path, engine: str | None = None):
         self.root = Path(root)
         data = self.root / "data"
         self.knowledge = KnowledgeStore(data / "knowledge.jsonl")
@@ -117,8 +117,32 @@ class MonadLoop:
             if sha in seen.get(url, ()):
                 rec.observations["sources"][url] = "unchanged"
                 continue
-            read_url(self.knowledge, url, fetcher=lambda _u, raw=raw: raw)
+            claim = read_url(self.knowledge, url, fetcher=lambda _u, raw=raw: raw)
             rec.observations["sources"][url] = "changed" if url in seen else "new"
+            self.judge_source(rec, claim, raw)
+
+    JUDGE_SYSTEM = ("You extract what a web page states. Reply with a JSON array of at most 3 short, "
+                    "self-contained factual statements the page makes, in the page's language. "
+                    "No opinions, no inference, no commentary. JSON only.")
+
+    def judge_source(self, rec: IterationRecord, claim: Claim, raw: bytes) -> None:
+        """First real Engine use: extract what a new/changed source states → DATA claims about
+        the source (confidence 0.6: the model may misread). Engine failure is recorded, not hidden."""
+        if self.engine.name == "null":
+            return
+        _, text = html_to_text(raw.decode("utf-8", errors="replace"))
+        try:
+            reply = self.engine.complete(text[:6000], system=self.JUDGE_SYSTEM)
+            statements = json.loads(reply[reply.find("["):reply.rfind("]") + 1])
+        except Exception as e:  # unreachable server, bad JSON, ...
+            rec.blocked.append(f"engine {self.engine.name} failed on {claim.source}: {str(e)[:120]}")
+            return
+        for st in statements[:3]:
+            if isinstance(st, str) and st.strip():
+                self.knowledge.add(Claim(text=f"{claim.source} states: {st.strip()}", origin="DATA",
+                                         confidence=0.6, source=claim.source, evidence=[claim.id],
+                                         tags=["extracted", f"engine:{self.engine.name}"], expires_days=30))
+        rec.learned.append(f"extracted {min(len(statements), 3)} statements from {claim.source}")
 
     def identify_unknowns(self, rec: IterationRecord) -> None:
         rec.unknowns = [c.text for c in self.knowledge.unknowns()]

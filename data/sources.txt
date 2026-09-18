@@ -2,3 +2,4 @@
 # Origin of every stored claim: DATA ("this source said …"), never truth.
 https://tanzil.net/docs/quran_text_types
 https://docs.python.org/3/whatsnew/index.html
+https://tanzil.net/docs/download

@@ -74,3 +74,26 @@ def test_loop_compares_with_previous_iteration(tmp_path, monkeypatch):
     assert r2.improvement["verdict"] == "DEPLOY" and r2.improvement["deltas"] == {"sources_read": 1}
     r3 = L.MonadLoop(tmp_path).iterate()
     assert r3.improvement["verdict"] == "INCONCLUSIVE"  # same as before: no fake progress
+
+
+def test_lmstudio_engine_and_judge_step(tmp_path, monkeypatch):
+    import io, json
+    from monad.core import engine as E, loop as L
+
+    class FakeResp(io.BytesIO):
+        def __enter__(self): return self
+        def __exit__(self, *a): pass
+    reply = json.dumps({"choices": [{"message": {"content": '["The sky is blue", "Water is wet"]'}}]}).encode()
+    monkeypatch.setattr(E.urllib.request, "urlopen", lambda req, timeout=0: FakeResp(reply))
+    eng = E.LMStudioEngine(url="http://x/v1", model="m")
+    assert eng.complete("hi") == '["The sky is blue", "Water is wet"]'
+
+    monkeypatch.setenv("MONAD_ENGINE", "lmstudio")
+    monkeypatch.setattr(L, "fetch", lambda u: b"<p>page</p>")
+    (tmp_path / "data").mkdir()
+    (tmp_path / "data" / "sources.txt").write_text("https://a.test/\n")
+    r = L.MonadLoop(tmp_path).iterate()
+    assert r.engine == "lmstudio" and not [b for b in r.blocked if "no reasoning engine" in b]
+    extracted = [c for c in L.MonadLoop(tmp_path).knowledge.all() if "extracted" in c.tags]
+    assert [c.text for c in extracted] == ["https://a.test/ states: The sky is blue", "https://a.test/ states: Water is wet"]
+    assert all(c.confidence == 0.6 and c.evidence for c in extracted)

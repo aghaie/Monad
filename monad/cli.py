@@ -39,11 +39,13 @@ def main(argv: list[str] | None = None) -> int:
         for v in hits:
             print(f"{v.tags[1]:8s} {v.text}")
         print(f"-- {len(hits)} ayah(s), origin=REVELATION, source={q and 'tanzil:quran-simple'}")
+    elif cmd == "ask" and len(argv) >= 2:
+        print(f"[{loop.engine.name}] " + loop.engine.complete(" ".join(argv[1:])))
     elif cmd == "contradictions":
         for a, b in loop.knowledge.contradictions():
             print(f"[{a.origin}] {a.text}\n   ⟂ [{b.origin}] {b.text}")
     else:
-        print("usage: python -m monad iterate | status | skills | contradictions | read <url> | quran <sura:ayah> | quran search <term> | skill add <spec.json>")
+        print("usage: python -m monad iterate | status | skills | contradictions | read <url> | quran <sura:ayah> | quran search <term> | ask <prompt> | skill add <spec.json>")
         return 1
     return 0
 
