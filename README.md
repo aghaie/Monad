@@ -8,7 +8,7 @@ Founder: Ali Aghaei. Constitution: `MONAD_CONSTITUTION.md` (immutable core).
 
 ## Run
 ```
-python3 -m pytest -q          # 21 tests (core + reading + observer + comparison + product)
+python3 -m pytest -q          # 22 tests (core + reading + observer + comparison + product)
 python3 -m monad iterate      # one cycle of the creation loop + MONAD REPORT
 python3 -m monad status | skills | contradictions
 python3 -m monad read <url>                # اقرأ: read one web source → DATA claim with provenance
@@ -17,6 +17,13 @@ python3 -m monad serve                     # Mizan at http://127.0.0.1:8765 — 
 python3 -m monad ingest [export.jsonl]     # fallback when opened as file://: Mizan «خروجی JSON» (default: newest in ~/Downloads)
 python3 scripts/seed_skills.py
 ```
+## `/monad` — the public skill
+`skills/monad/SKILL.md` turns any Claude Code session into a MONAD improver for *any* project: observe → level (L0–L5) → propose one step → execute → measure → report, with FACT/HYPOTHESIS/UNKNOWN labels and DEPLOY/ROLLBACK verdicts. Install:
+```
+ln -s "$(pwd)/skills/monad" ~/.claude/skills/monad     # then: /monad <project path>   (or: /monad <path> propose only)
+```
+Tested TDD-style: the same fixture project was improved by an agent without the skill (bundled six fixes, no baseline, no proposal, no report file) and with it (reproduced defects first, L1→L2 in one measured step, proposal + report files, WHY/WHAT/EXPECTED/ACTUAL commit).
+
 First product: `products/mizan/index.html` — open it in any browser (offline, no server). That file *is* the deployment (local, by founder decision). Easiest: `python3 -m monad serve` and open http://127.0.0.1:8765 — every claim you log lands in `data/usage/mizan.jsonl` and the knowledge store (tag `usage:mizan`). That is how MONAD measures real use.
 
 ## Map

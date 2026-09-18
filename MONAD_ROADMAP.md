@@ -29,6 +29,7 @@ No version is final. Each is a stage.
 - [ ] Contradiction and staleness sweeps over the knowledge store
 
 ## v0.4 — Self-improvement under measurement
+- [x] 2026-09-18: `/monad` public skill (skills/monad/SKILL.md) — MONAD's cycle applied to any external project; RED/GREEN tested on a fixture project
 - [ ] Skill Factory creates skills from capability gaps automatically, with generated tests
 - [ ] Agent Factory spawns specialised agents (Research, Coding, Testing, Security) under constitution
 - [x] 2026-09-18: every iteration is scored against the previous one (7 metrics, DEPLOY/ROLLBACK/INCONCLUSIVE) — report section 4 is no longer empty
