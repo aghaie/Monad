@@ -9,8 +9,10 @@ description: Use when asked to improve, upgrade, review-and-fix, or "take forwar
 
 **Violating the letter of this cycle is violating its spirit.**
 
-## Stage 0 — Language and scope
+## Stage 0 — Language, scope, goal, where files go
 Reply in the user's language. Scope = the project path given (default: cwd). Do not touch anything outside it.
+Goal: if the user named a task ("add X", "fix Y"), that task is the step of this cycle; the level ladder only ranks the *next* step. No task named → the step is the next level-up.
+Output folder `<out>`: the place the project's own instructions (CLAUDE.md / AGENTS.md) name for plans or reports; none named and `docs` is gitignored → `.claude/monad/`; otherwise `docs/monad/`. Check with `git check-ignore docs`.
 
 ## Stage 1 — OBSERVE (facts only, each with its command)
 Run, do not guess. Record every fact with the command that produced it:
@@ -21,6 +23,7 @@ cat README* 2>/dev/null | head -60                  # stated purpose, stated usa
 <run the documented usage exactly as the README says>   # does it work AS DOCUMENTED?
 <run tests / build / lint if they exist>            # BASELINE numbers: pass/fail counts, errors
 ```
+Runs need services (docker, a database, a browser)? Use only the project's documented *dev* setup. Never a production URL, database, or credential. Cannot run it here → the fact is UNKNOWN and the level is capped at what you saw; do not infer.
 Reproduce every bug you intend to fix **before** touching code. A bug you only read is a HYPOTHESIS; a bug you ran is a FACT.
 
 ## Stage 2 — LEVEL (where the project actually is)
@@ -35,9 +38,9 @@ Reproduce every bug you intend to fix **before** touching code. A bug you only r
 The level is the highest row whose evidence you actually saw. "Probably L2" = L1.
 
 ## Stage 3 — PROPOSE (write it down before doing it)
-Write `docs/monad/PROPOSAL-<YYYY-MM-DD>.md` (create the folder) containing:
+Write `<out>/PROPOSAL-<YYYY-MM-DD>.md` (create the folder) containing:
 1. Level now + the evidence lines from Stage 1.
-2. **ONE** step that moves the project up one level (or fixes the worst L-blocker), and why it is the smallest correct change. Candidate steps are ranked by: need of the real users > truth (fixes a reproduced defect) > utility > feasibility > cost/risk.
+2. **ONE** step — the user's task, or else the move up one level (or the worst L-blocker) — and why it is the smallest correct change. Candidate steps are ranked by: need of the real users > truth (fixes a reproduced defect) > utility > feasibility > cost/risk.
 3. The metric that will show the step worked, and its baseline value from Stage 1.
 4. What you will NOT do this cycle (everything else you noticed).
 If the user said "propose only", stop here.
@@ -65,7 +68,7 @@ ACTUAL: <metric after, verbatim from the command>
 ```
 
 ## Stage 6 — REPORT
-Write `docs/monad/REPORT-<YYYY-MM-DD>.md` with exactly these seven headings, one to three lines each, then echo it in chat:
+Write `<out>/REPORT-<YYYY-MM-DD>.md` with exactly these seven headings, one to three lines each, then echo it in chat:
 1. What I understood (facts with commands) · فهمیدم
 2. What I built/changed · ساختم
 3. What is usable now · قابل استفاده
@@ -81,7 +84,8 @@ Every sentence in sections 1 and 4 is one of: **FACT** (has a command/output), *
 - Fixing six things in one pass ("while I'm here")
 - "Better" stated without a before-number
 - Changing a file format without reading old files
-- Report in chat only, no file
+- Report in chat only, no file, or a file in a gitignored folder
+- Running the project against a production database or URL "just to look"
 - Asking the user to choose between options you could rank with the Stage 3 criteria
 
 | Rationalization | Reality |
