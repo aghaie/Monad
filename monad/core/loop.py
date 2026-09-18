@@ -193,7 +193,7 @@ class MonadLoop:
         rec.next_step = (
             f"close gap: {rec.capability_gaps[0]}" if rec.capability_gaps
             else "add sources to data/sources.txt" if not sources
-            else f"first real use of {no_usage[0]}: export from the product, then `python3 -m monad ingest`" if no_usage
+            else f"first real use of {no_usage[0]}: `python3 -m monad serve`, then work in the product (it syncs itself)" if no_usage
             else "judge what the sources said (needs Engine); until then: contradictions/staleness sweep")
 
     def compare(self, rec: IterationRecord) -> None:
