@@ -135,7 +135,7 @@ def report(rec: IterationRecord) -> str:
         f"MONAD REPORT — iteration {rec.number}",
         f"1. فهمیدم: {rec.observations}",
         f"2. ساختم/بررسی کردم: {len(rec.products)} محصول در خط تولید",
-        f"3. قابل استفاده: {[p['name'] for p in rec.products if p['stage'] in ('TEST','DEPLOYMENT','OBSERVATION','IMPROVEMENT')]}",
+        f"3. قابل استفاده: {[p['name'] for p in rec.products if p['stage'] in ('TEST','SECURITY_REVIEW','USER_EXPERIENCE','DEPLOYMENT','OBSERVATION','IMPROVEMENT')]}",
         f"4. بهتر شد: —",
         f"5. شکست/مسدود: {rec.blocked}",
         f"6. یاد گرفتم: {rec.learned}; شکاف‌ها: {rec.capability_gaps}",

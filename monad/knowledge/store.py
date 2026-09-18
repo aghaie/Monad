@@ -69,8 +69,11 @@ class Claim:
 _NEG = re.compile(r"\b(not|no|never|isn't|aren't|doesn't|don't|cannot|can't)\b|\bن(می|یست|دارد|باید)", re.I)
 
 
+_STOP = re.compile(r"(^|\s)(است|هست|می‌باشد)(?=\s|$)")
+
+
 def _normalize(text: str) -> str:
-    t = _NEG.sub(" ", text.lower())
+    t = _STOP.sub(" ", _NEG.sub(" ", text.lower()))
     return re.sub(r"[^\w؀-ۿ]+", " ", t).strip()
 
 

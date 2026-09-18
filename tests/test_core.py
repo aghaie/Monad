@@ -136,3 +136,10 @@ def test_loop_iterates_and_persists(tmp_path):
     assert "no reasoning engine" in r2.blocked[0]
     assert r2.observations["claims"] == 1  # r1's self-observation was learned
     assert (tmp_path / "reports" / "iteration_002.json").exists()
+
+
+def test_persian_contradiction(tmp_path):
+    ks = KnowledgeStore(tmp_path / "k.jsonl")
+    ks.add(Claim(text="این ابزار مفید است", origin="HYPOTHESIS", source="علی"))
+    ks.add(Claim(text="این ابزار مفید نیست", origin="EMPIRICAL_RESULT", source="نظرسنجی"))
+    assert len(ks.contradictions()) == 1

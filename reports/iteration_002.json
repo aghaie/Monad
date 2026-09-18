@@ -1,0 +1,36 @@
+{
+  "number": 2,
+  "started": "2026-09-18T08:17:07.435760+00:00",
+  "engine": "null",
+  "observations": {
+    "claims": 6,
+    "skills": 8,
+    "active_skills": 6,
+    "agents": 0,
+    "products": 1,
+    "git_head": "f3d7d76"
+  },
+  "unknowns": [],
+  "capability_gaps": [
+    "web_research",
+    "quranic_reference"
+  ],
+  "contradictions": 0,
+  "stale_claims": 0,
+  "products": [
+    {
+      "name": "mizan",
+      "stage": "USER_EXPERIENCE",
+      "outcome": "UNKNOWN"
+    }
+  ],
+  "blocked": [
+    "no reasoning engine configured (needs API key or local model)"
+  ],
+  "learned": [
+    "constitutional self-check: UNVERIFIED"
+  ],
+  "next_step": "close gap: web_research",
+  "did_real_work": true,
+  "finished": "2026-09-18T08:17:07.442577+00:00"
+}

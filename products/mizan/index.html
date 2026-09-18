@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>میزان — دفتر ادعا و شاهد</title>
+<style>
+  :root{--bg:#0e1420;--panel:#151d2c;--line:#25304a;--ink:#e7ecf5;--mute:#8b97b1;--acc:#c9a24a;--bad:#d9534f;--ok:#4caf7d;--warn:#e0a53a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 system-ui,"Vazirmatn",Tahoma,sans-serif;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:40px 40px;background-position:-1px -1px}
+  header{padding:20px 24px 8px;border-bottom:1px solid var(--line);background:rgba(14,20,32,.92)}
+  h1{margin:0;font-size:22px;letter-spacing:.5px}
+  h1 small{color:var(--acc);font-weight:400;font-size:13px;margin-inline-start:10px}
+  .sub{color:var(--mute);font-size:13px;margin-top:4px}
+  main{display:grid;grid-template-columns:380px 1fr;gap:16px;padding:16px 24px;max-width:1300px;margin:auto}
+  @media(max-width:860px){main{grid-template-columns:1fr}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+  label{display:block;font-size:12px;color:var(--mute);margin:10px 0 4px}
+  input,select,textarea{width:100%;background:#0b1019;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px;font:inherit}
+  textarea{min-height:70px;resize:vertical}
+  button{background:var(--acc);color:#111;border:0;border-radius:6px;padding:9px 14px;font:inherit;font-weight:600;cursor:pointer}
+  button.ghost{background:transparent;color:var(--mute);border:1px solid var(--line)}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+  .stat{background:#0b1019;border:1px solid var(--line);border-radius:8px;padding:8px;text-align:center}
+  .stat b{display:block;font-size:20px;color:var(--acc)}
+  .stat span{font-size:11px;color:var(--mute)}
+  .claim{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:8px;background:#0f1624}
+  .claim .t{font-size:15px}
+  .tag{display:inline-block;font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--mute);margin-inline-end:6px}
+  .tag.o{color:var(--acc);border-color:var(--acc)}
+  .tag.c{color:var(--bad);border-color:var(--bad)}
+  .tag.u{color:var(--warn);border-color:var(--warn)}
+  .meta{font-size:12px;color:var(--mute);margin-top:4px}
+  .bar{height:4px;background:#1c2537;border-radius:2px;margin-top:6px}
+  .bar i{display:block;height:100%;background:var(--ok);border-radius:2px}
+  .hint{font-size:12px;color:var(--mute);border-inline-start:2px solid var(--acc);padding-inline-start:8px;margin-top:12px}
+  .en{direction:ltr;text-align:left;color:var(--mute);font-size:12px}
+  #empty{color:var(--mute);text-align:center;padding:30px}
+</style>
+</head>
+<body>
+<header>
+  <h1>میزان <small>MIZAN · claim &amp; evidence ledger · v0.1</small></h1>
+  <div class="sub">داده، تحلیل، فرضیه و نتیجه را از هم جدا نگه دار. هر ادعا یک منشأ دارد. تناقض‌ها پنهان نمی‌شوند.</div>
+</header>
+<main>
+  <section class="panel">
+    <form id="f">
+      <label>متن ادعا / Claim</label>
+      <textarea id="text" required placeholder="مثلاً: این ابزار برای کاربران مفید است"></textarea>
+      <label>منشأ / Origin class</label>
+      <select id="originSel"></select>
+      <label>منبع (provenance) / Source</label>
+      <input id="source" placeholder="URL، کتاب، شخص، آزمایش…">
+      <label>اطمینان / Confidence: <span id="cv">50٪</span></label>
+      <input id="conf" type="range" min="0" max="100" value="50">
+      <label>شاهد برای (شناسه ادعای دیگر) / Evidence for</label>
+      <select id="evfor"><option value="">—</option></select>
+      <label>برچسب‌ها / Tags (با کاما)</label>
+      <input id="tags" placeholder="محصول, بازار">
+      <div class="row" style="margin-top:12px">
+        <button type="submit">ثبت ادعا</button>
+        <button type="button" class="ghost" id="exp">خروجی JSON</button>
+        <label class="ghost" style="margin:0"><input type="file" id="imp" accept=".json,.jsonl" hidden><button type="button" class="ghost" onclick="imp.click()">ورودی JSON</button></label>
+      </div>
+    </form>
+    <div class="hint">
+      قاعده‌ها: ادعای بدون منبع فقط با منشأ «نمی‌دانم» ثبت می‌شود. اطمینان باید متناسب با شواهد باشد، نه جذابیت ادعا. یک واقعیت را چند بار به‌عنوان چند شاهد مستقل حساب نکن.
+      <div class="en">Origin classes follow the MONAD Constitution. Export is compatible with MONAD's knowledge store (data/knowledge.jsonl).</div>
+    </div>
+  </section>
+  <section class="panel">
+    <div class="stats">
+      <div class="stat"><b id="sN">0</b><span>ادعا</span></div>
+      <div class="stat"><b id="sS">0٪</b><span>با منبع</span></div>
+      <div class="stat"><b id="sC">0</b><span>تناقض</span></div>
+      <div class="stat"><b id="sU">0</b><span>نمی‌دانم</span></div>
+    </div>
+    <div class="row" style="margin-bottom:10px">
+      <input id="q" placeholder="جست‌وجو…" style="flex:1">
+      <select id="fo"><option value="">همه منشأها</option></select>
+      <label style="margin:0"><input type="checkbox" id="onlyC"> فقط تناقض‌ها</label>
+    </div>
+    <div id="list"></div>
+    <div id="empty">هنوز ادعایی ثبت نشده است.</div>
+  </section>
+</main>
+<script>
+const ORIGINS = {REVELATION:"وحی",QURANIC_PRINCIPLE:"اصل قرآنی",UNDERSTANDING:"فهم/استنباط",DATA:"داده/شاهد",RATIONAL_ANALYSIS:"تحلیل عقلی",HYPOTHESIS:"فرضیه",EMPIRICAL_RESULT:"نتیجه تجربی",OPINION:"نظر",ENGINEERING_DECISION:"تصمیم مهندسی",UNKNOWN:"نمی‌دانم"};
+const NEG = /\b(not|no|never|isn't|aren't|doesn't|don't|cannot|can't)\b|ن(می|یست|دارد|باید)/i;
+const STOP = /(^|\s)(است|هست|می‌باشد)(?=\s|$)/g;
+const norm = s => s.toLowerCase().replace(NEG," ").replace(STOP," ").replace(/[^\w؀-ۿ]+/g," ").trim();
+const hasNeg = s => NEG.test(s);
+const uid = () => Math.random().toString(16).slice(2,14);
+
+let claims = [];
+const KEY = "mizan.claims.v1";
+function load(){ try{ const r=localStorage.getItem(KEY); if(r) claims=JSON.parse(r);}catch(e){} }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(claims)); }catch(e){} }
+
+function findContradictions(c){
+  const k=norm(c.text), n=hasNeg(c.text);
+  return claims.filter(o=>o.id!==c.id && norm(o.text)===k && hasNeg(o.text)!==n);
+}
+function addClaim(c){
+  for(const o of findContradictions(c)){ c.contradicts.push(o.id); o.contradicts.push(c.id); }
+  claims.push(c); save(); render();
+}
+function makeClaim(text, origin, source, confidence, evidenceFor, tags){
+  if(origin!=="UNKNOWN" && !source.trim()) throw new Error("no important knowledge without provenance");
+  const c={id:uid(),text:text.trim(),origin,confidence:Math.max(0,Math.min(1,confidence)),source:source.trim(),evidence:[],contradicts:[],tags,status:"OPEN",created:new Date().toISOString(),expires_days:null};
+  if(evidenceFor){ const t=claims.find(x=>x.id===evidenceFor); if(t) t.evidence.push(c.id); }
+  return c;
+}
+function stats(){
+  const n=claims.length, withSrc=claims.filter(c=>c.source).length;
+  const pairs=new Set(); claims.forEach(c=>c.contradicts.forEach(o=>pairs.add([c.id,o].sort().join("|"))));
+  return {n, srcPct:n?Math.round(100*withSrc/n):0, contradictions:pairs.size, unknown:claims.filter(c=>c.origin==="UNKNOWN").length};
+}
+function render(){
+  const s=stats(); sN.textContent=s.n; sS.textContent=s.srcPct+"٪"; sC.textContent=s.contradictions; sU.textContent=s.unknown;
+  const q=norm(document.getElementById("q").value||""), fo=document.getElementById("fo").value, oc=onlyC.checked;
+  const rows=claims.filter(c=>(!q||norm(c.text).includes(q)||norm(c.source).includes(q))&&(!fo||c.origin===fo)&&(!oc||c.contradicts.length)).slice().reverse();
+  list.innerHTML=rows.map(c=>`<div class="claim" data-id="${c.id}">
+    <div class="t">${esc(c.text)}</div>
+    <div class="meta"><span class="tag o">${ORIGINS[c.origin]}</span>${c.contradicts.length?`<span class="tag c">⟂ ${c.contradicts.length} تناقض</span>`:""}${c.origin==="UNKNOWN"?`<span class="tag u">ناشناخته</span>`:""}${c.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join("")}
+    منبع: ${c.source?esc(c.source):"<i>—</i>"} · شواهد: ${c.evidence.length} · <code>${c.id}</code></div>
+    <div class="bar" title="اطمینان ${Math.round(c.confidence*100)}٪"><i style="width:${c.confidence*100}%"></i></div>
+  </div>`).join("");
+  empty.style.display=rows.length?"none":"block";
+  evfor.innerHTML='<option value="">—</option>'+claims.map(c=>`<option value="${c.id}">${esc(c.text.slice(0,50))}</option>`).join("");
+}
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+
+// init
+for(const [k,v] of Object.entries(ORIGINS)){ originSel.add(new Option(`${v} · ${k}`,k)); fo.add(new Option(v,k)); }
+originSel.value="HYPOTHESIS";
+conf.oninput=()=>cv.textContent=conf.value+"٪";
+f.onsubmit=e=>{e.preventDefault();
+  try{ addClaim(makeClaim(text.value,originSel.value,source.value,conf.value/100,evfor.value,tags.value.split(",").map(t=>t.trim()).filter(Boolean))); f.reset(); originSel.value="HYPOTHESIS"; cv.textContent="50٪"; }
+  catch(err){ alert("ادعای بدون منبع فقط با منشأ «نمی‌دانم» قابل ثبت است.\n"+err.message); }
+};
+exp.onclick=()=>{ const b=new Blob([claims.map(c=>JSON.stringify(c)).join("\n")+"\n"],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download="mizan-knowledge.jsonl"; a.click(); };
+imp.onchange=async()=>{ const t=await imp.files[0].text(); const arr=t.trim().startsWith("[")?JSON.parse(t):t.split("\n").filter(Boolean).map(l=>JSON.parse(l)); const ids=new Set(claims.map(c=>c.id)); arr.forEach(c=>{ if(!ids.has(c.id)) claims.push(c); }); save(); render(); };
+["q","fo","onlyC"].forEach(id=>document.getElementById(id).oninput=render);
+load(); render();
+window.mizan={makeClaim,addClaim,findContradictions,stats,get claims(){return claims}, reset(){claims=[];save();render();}};
+</script>
+</body>
+</html>
