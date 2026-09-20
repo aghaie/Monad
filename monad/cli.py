@@ -32,6 +32,20 @@ def main(argv: list[str] | None = None) -> int:
         from monad.web import read_url
         c = read_url(loop.knowledge, argv[1])
         print(f"[{c.origin}] {c.text[:200]}\n   source={c.source} tags={c.tags[1:]}")
+    elif cmd == "claim" and len(argv) >= 4:
+        from monad.knowledge import Claim
+        pos, flags, rest = [], {}, iter(argv[1:])
+        for a in rest:
+            if a.startswith("--"):
+                flags[a[2:]] = next(rest, "")
+            else:
+                pos.append(a)
+        c = loop.knowledge.add(Claim(
+            text=" ".join(pos[2:]), origin=pos[0], source=pos[1],
+            confidence=float(flags.get("conf") or 0.6),
+            evidence=(flags.get("evidence") or "").split(",") if flags.get("evidence") else [],
+            tags=((flags.get("tags") or "").split(",") if flags.get("tags") else []) + ["engine:session"]))
+        print(f"{c.id} [{c.origin}] {c.text[:120]}")
     elif cmd == "quran" and len(argv) >= 2:
         from monad.quran import Quran
         q = Quran()
@@ -75,7 +89,7 @@ def main(argv: list[str] | None = None) -> int:
         for a, b in loop.knowledge.contradictions():
             print(f"[{a.origin}] {a.text}\n   ⟂ [{b.origin}] {b.text}")
     else:
-        print("usage: python -m monad iterate | status | skills | contradictions | read <url> | quran <sura:ayah> | quran search <term> | ask <prompt> | qa | answer <id> <text> | serve [port] | ingest [export.jsonl] | monads [kind] | skill add <spec.json>")
+        print("usage: python -m monad iterate | status | skills | contradictions | read <url> | claim <ORIGIN> <source> <text> [--conf c --evidence id,id --tags a,b] | quran <sura:ayah> | quran search <term> | ask <prompt> | qa | answer <id> <text> | serve [port] | ingest [export.jsonl] | monads [kind] | skill add <spec.json>")
         return 1
     return 0
 

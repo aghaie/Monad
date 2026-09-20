@@ -1,18 +1,18 @@
 {
-  "iterations": 19,
+  "iterations": 21,
   "last": {
-    "number": 19,
-    "started": "2026-09-20T22:26:21.215109+00:00",
+    "number": 21,
+    "started": "2026-09-20T22:38:55.496836+00:00",
     "engine": "session",
     "observations": {
-      "reports_registered": 1,
-      "monads": 17,
-      "claims": 41,
+      "reports_registered": 0,
+      "monads": 18,
+      "claims": 50,
       "skills": 9,
       "active_skills": 9,
       "agents": 0,
       "products": 1,
-      "git_head": "d021e09",
+      "git_head": "9bc5e6b",
       "usage": {
         "mizan": {
           "claims": 5,
@@ -26,9 +26,12 @@
         "https://tanzil.net/docs/quran_text_types": "unchanged",
         "https://docs.python.org/3/whatsnew/index.html": "unchanged",
         "https://tanzil.net/docs/download": "unchanged"
-      }
+      },
+      "judged_sources": 3
     },
-    "unknowns": [],
+    "unknowns": [
+      "نامعلوم: آیا فایل محلی quran-simple.csv همان نسخهٔ ۱٫۱ تنزیل است؟ MANIFEST فقط مبدأ واردکردن (monad-old، ۱۴۰۵/۰۶/۲۷) را ثبت کرده، نه شمارهٔ نسخه. برای پاسخ باید متن رسمی نسخهٔ ۱٫۱ دریافت و مقایسه شود."
+    ],
     "capability_gaps": [],
     "contradictions": 0,
     "stale_claims": 0,
@@ -43,17 +46,17 @@
     "learned": [
       "constitutional self-check: UNVERIFIED"
     ],
-    "next_step": "judge what the sources said (needs Engine); until then: contradictions/staleness sweep",
+    "next_step": "resolve unknown: نامعلوم: آیا فایل محلی quran-simple.csv همان نسخهٔ ۱٫۱ تنزیل است؟ MANIFEST فقط مبدأ واردکردن (monad-old، ۱۴۰۵/۰۶/۲۷) را ",
     "improvement": {
       "verdict": "DEPLOY",
       "reasons": [
         "all measured metrics improved or held"
       ],
       "deltas": {
-        "usage_claims": 5
+        "judged_sources": 3
       }
     },
     "did_real_work": true,
-    "finished": "2026-09-20T22:26:23.407673+00:00"
+    "finished": "2026-09-20T22:38:56.988323+00:00"
   }
 }

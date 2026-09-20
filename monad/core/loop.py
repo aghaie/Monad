@@ -27,7 +27,7 @@ from monad.reports import register_reports
 
 # What "better" means for an iteration, measured against the previous one (Article 14).
 ITERATION_METRICS = [
-    Metric("active_skills"), Metric("sources_read"), Metric("products"),
+    Metric("active_skills"), Metric("sources_read"), Metric("judged_sources"), Metric("products"),
     Metric("usage_claims"),   # Article 20: real use by real users, ingested from product exports
     Metric("capability_gaps", higher_is_better=False, critical=True),
     Metric("contradictions", higher_is_better=False),
@@ -41,6 +41,7 @@ def iteration_metrics(rec: dict) -> dict[str, float]:
     return {
         "active_skills": obs.get("active_skills", 0),
         "sources_read": len([v for v in obs.get("sources", {}).values() if v != "failed"]),
+        "judged_sources": obs.get("judged_sources", 0),
         "products": obs.get("products", 0),
         "usage_claims": sum(u.get("claims", 0) for u in obs.get("usage", {}).values()),
         "capability_gaps": len(rec.get("capability_gaps", [])),
@@ -200,13 +201,18 @@ class MonadLoop:
             origin="DATA", confidence=1.0, source="monad.core.loop.iterate",
             tags=["self-observation"], expires_days=30))
         sources = rec.observations.get("sources", {})
+        judged = {c.source for c in self.knowledge.all() if "extracted" in c.tags}
+        unjudged = [u for u in sources if u not in judged]
+        rec.observations["judged_sources"] = len(sources) - len(unjudged)
         rec.did_real_work = bool(rec.capability_gaps) or bool(rec.products) or bool(sources)
         no_usage = [p for p, u in rec.observations.get("usage", {}).items() if not u.get("claims")]
         rec.next_step = (
             f"close gap: {rec.capability_gaps[0]}" if rec.capability_gaps
             else "add sources to data/sources.txt" if not sources
             else f"first real use of {no_usage[0]}: `python3 -m monad serve`, then work in the product (it syncs itself)" if no_usage
-            else "judge what the sources said (needs Engine); until then: contradictions/staleness sweep")
+            else f"judge what this source said (needs Engine): {unjudged[0]} — `python3 -m monad claim DATA <url> <what it states> --evidence <raw claim id> --tags extracted`" if unjudged
+            else f"resolve unknown: {rec.unknowns[0][:120]}" if rec.unknowns
+            else "contradictions/staleness sweep")
 
     def compare(self, rec: IterationRecord) -> None:
         """Article 14: every version must be comparable with the previous version."""

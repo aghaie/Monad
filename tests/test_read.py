@@ -1,4 +1,6 @@
 """Tests for the two reading skills: web_research (monad.web) and quranic_reference (monad.quran)."""
+import dataclasses
+
 import pytest
 
 from monad.knowledge import KnowledgeStore
@@ -158,3 +160,26 @@ def test_session_engine_asks_then_remembers(tmp_path, monkeypatch):
     (tmp_path / "data").mkdir()
     r = L.MonadLoop(tmp_path).iterate()
     assert r.engine == "session" and not [b for b in r.blocked if "no reasoning engine" in b]
+
+
+def test_loop_measures_judged_sources_and_points_at_the_unjudged(tmp_path, monkeypatch):
+    """A source that was only fetched is not yet knowledge: the loop counts how many
+    sources an Engine actually judged (claims tagged `extracted`) and names the rest."""
+    from monad.core import loop as L
+    from monad.knowledge import Claim
+    (tmp_path / "data").mkdir()
+    (tmp_path / "data" / "sources.txt").write_text("https://a.test/\nhttps://b.test/\n")
+    monkeypatch.setattr(L, "fetch", lambda url: b"<p>hello</p>")
+    monkeypatch.setattr(L, "REQUIRED_SKILLS", [])   # this test is about judging, not skill gaps
+
+    loop = L.MonadLoop(tmp_path)
+    r1 = loop.iterate()
+    assert r1.observations["judged_sources"] == 0
+    assert "https://a.test/" in r1.next_step
+
+    loop.knowledge.add(Claim(text="https://a.test/ states: hello", origin="DATA", confidence=0.6,
+                             source="https://a.test/", tags=["extracted"]))
+    r2 = L.MonadLoop(tmp_path).iterate()
+    assert r2.observations["judged_sources"] == 1
+    assert "https://b.test/" in r2.next_step and "https://a.test/" not in r2.next_step
+    assert L.iteration_metrics(dataclasses.asdict(r2))["judged_sources"] == 1
