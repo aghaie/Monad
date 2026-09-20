@@ -19,3 +19,7 @@ Compared with Tanzil "Quran Simple, Version 1.1" (tanzil.net/pub/download, txt-2
 - OPEN (claim `d402d92ba6fe`): whether those 6 come from Tanzil v1.0 or from the monad-old
   import pipeline. Replacing this file with the verbatim v1.1 text is a founder decision —
   it changes the REVELATION corpus, so it was not done unattended.
+- **Version identified (2026-09-21, iteration 24):** all six differences are exactly the
+  edits Tanzil made in v1.1 (tanzil.net/updates/, released 2021-02-12), so this file is the
+  **pre-1.1 Simple text (v1.0.2, 2008–2021)**. The monad-old source file has the same sha256,
+  so no import step altered it. Still undocumented upstream: the missing U+0670 and NFC order.

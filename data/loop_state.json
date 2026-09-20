@@ -1,18 +1,18 @@
 {
-  "iterations": 23,
+  "iterations": 24,
   "last": {
-    "number": 23,
-    "started": "2026-09-20T22:47:53.813247+00:00",
+    "number": 24,
+    "started": "2026-09-20T22:49:38.237391+00:00",
     "engine": "session",
     "observations": {
-      "reports_registered": 0,
-      "monads": 19,
-      "claims": 55,
+      "reports_registered": 1,
+      "monads": 20,
+      "claims": 62,
       "skills": 9,
       "active_skills": 9,
       "agents": 0,
       "products": 1,
-      "git_head": "a68514d",
+      "git_head": "e74cd91",
       "usage": {
         "mizan": {
           "claims": 5,
@@ -25,14 +25,13 @@
       "sources": {
         "https://tanzil.net/docs/quran_text_types": "unchanged",
         "https://docs.python.org/3/whatsnew/index.html": "unchanged",
-        "https://tanzil.net/docs/download": "unchanged"
+        "https://tanzil.net/docs/download": "unchanged",
+        "https://tanzil.net/updates/": "unchanged"
       },
-      "unknowns_resolved": 1,
-      "judged_sources": 3
+      "unknowns_resolved": 2,
+      "judged_sources": 4
     },
-    "unknowns": [
-      "نامعلومِ باریک‌شده: آن ۶ اختلاف از کجاست؟ دو فرضیه، هیچ‌کدام آزموده نشده: (۱) فایل محلی از نسخهٔ قدیمی‌تر تنزیل (۱٫۰) آمده؛ (۲) خط‌لولهٔ monad-old هنگام واردکردن، الف کوتاه را حذف و NFC کرده و این ۶ مورد از همان‌جاست. نسخهٔ ۱٫۰ دیگر از tanzil.net قابل دریافت نیست."
-    ],
+    "unknowns": [],
     "capability_gaps": [],
     "contradictions": 0,
     "stale_claims": 0,
@@ -47,17 +46,19 @@
     "learned": [
       "constitutional self-check: UNVERIFIED"
     ],
-    "next_step": "resolve unknown: نامعلومِ باریک‌شده: آن ۶ اختلاف از کجاست؟ دو فرضیه، هیچ‌کدام آزموده نشده: (۱) فایل محلی از نسخهٔ قدیمی‌تر تنزیل (۱٫۰) آم",
+    "next_step": "contradictions/staleness sweep",
     "improvement": {
       "verdict": "DEPLOY",
       "reasons": [
         "all measured metrics improved or held"
       ],
       "deltas": {
+        "sources_read": 1,
+        "judged_sources": 1,
         "unknowns_resolved": 1
       }
     },
     "did_real_work": true,
-    "finished": "2026-09-20T22:47:55.023245+00:00"
+    "finished": "2026-09-20T22:49:39.767092+00:00"
   }
 }
