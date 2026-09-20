@@ -7,8 +7,9 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field, asdict
-from datetime import datetime, timezone
 from pathlib import Path
+
+from monad.core.monad import Monad
 
 # `tests` may be empty at SPEC stage; activation then refuses (see activate()).
 REQUIRED = ("name", "purpose", "inputs", "outputs", "tools",
@@ -16,7 +17,8 @@ REQUIRED = ("name", "purpose", "inputs", "outputs", "tools",
 
 
 @dataclass
-class SkillSpec:
+class SkillSpec(Monad):
+    """A Monad of kind `skill`; identity (id) is shared by all records of one name@version."""
     name: str
     purpose: str
     inputs: list[str]
@@ -28,8 +30,9 @@ class SkillSpec:
     evaluation: str                 # metric + threshold
     version: str = "0.1.0"
     changelog: list[dict] = field(default_factory=list)
-    status: str = "SPEC"            # SPEC | ACTIVE | ROLLED_BACK
-    recorded: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    kind: str = field(default="skill", kw_only=True)
+    origin: str = field(default="ENGINEERING_DECISION", kw_only=True)
+    status: str = field(default="SPEC", kw_only=True)   # SPEC | ACTIVE | ROLLED_BACK
 
     def validate(self) -> list[str]:
         problems = []

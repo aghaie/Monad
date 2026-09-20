@@ -50,3 +50,38 @@ def test_claim_is_a_monad_and_old_rows_still_load(tmp_path):
     old = ks.get("old1")
     assert old.kind == "claim" and old.text == "old" and old.created.startswith("2026-01-01")
     assert ks.get(ks.add(c).id).text == "x"
+
+
+def test_skill_agent_product_are_monads():
+    from monad.skills import SkillSpec
+    from monad.agents import AgentSpec
+    from monad.factory import Product
+    s = SkillSpec(name="n", purpose="p", inputs=["a"], outputs=["b"], tools=["t"], dependencies=[],
+                  limitations=["l"], tests="", evaluation="e")
+    a = AgentSpec("x", "p", ["n"], why_needed="y", test_plan="t", retire_when="r")
+    p = Product("p", "why", "who", "prob", "sol", "meas")
+    for m, kind, status in ((s, "skill", "SPEC"), (a, "agent", "PROPOSED"), (p, "product", "OPEN")):
+        assert isinstance(m, Monad) and m.kind == kind and m.status == status
+        assert m.origin == "ENGINEERING_DECISION" and m.id and m.created
+
+
+def test_migration_script_moves_old_rows_under_the_root(tmp_path):
+    import json, subprocess, sys
+    from monad.skills import SkillRegistry
+    d = tmp_path / "data"; d.mkdir()
+    old = {"name": "s", "purpose": "p", "inputs": ["a"], "outputs": ["b"], "tools": ["t"], "dependencies": [],
+           "limitations": ["l"], "tests": "", "evaluation": "e", "version": "1.0.0", "changelog": [],
+           "status": "SPEC", "recorded": "2026-01-01T00:00:00+00:00"}
+    (d / "skills.jsonl").write_text(json.dumps(old) + "\n" + json.dumps({**old, "status": "ACTIVE"}) + "\n")
+    (d / "agents.jsonl").write_text("")
+    (d / "products.jsonl").write_text(json.dumps({"name": "p", "why": "w", "who": "w", "problem": "p",
+                                                  "solution": "s", "measurement": "m"}) + "\n")
+    for _ in range(2):   # idempotent
+        subprocess.run([sys.executable, "scripts/migrate_monad_root.py", str(tmp_path)], check=True)
+    rows = [json.loads(l) for l in (d / "skills.jsonl").read_text().splitlines()]
+    assert all("recorded" not in r and r["kind"] == "skill" and r["created"].startswith("2026-01-01") for r in rows)
+    assert rows[0]["id"] == rows[1]["id"]                         # same name@version → same identity
+    cur = SkillRegistry(d / "skills.jsonl").current("s")
+    assert cur.status == "ACTIVE" and cur.created.startswith("2026-01-01")
+    prod = json.loads((d / "products.jsonl").read_text())
+    assert prod["kind"] == "product" and prod["id"]

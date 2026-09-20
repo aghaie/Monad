@@ -7,14 +7,15 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field, asdict
-from datetime import datetime, timezone
 from pathlib import Path
 
+from monad.core.monad import Monad
 from monad.skills.registry import SkillRegistry
 
 
 @dataclass
-class AgentSpec:
+class AgentSpec(Monad):
+    """A Monad of kind `agent`."""
     name: str
     purpose: str
     skills: list[str]
@@ -22,8 +23,9 @@ class AgentSpec:
     test_plan: str
     retire_when: str
     constraints: list[str] = field(default_factory=lambda: ["MONAD_CONSTITUTION.md"])
-    status: str = "PROPOSED"  # PROPOSED | ACTIVE | RETIRED
-    created: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    kind: str = field(default="agent", kw_only=True)
+    origin: str = field(default="ENGINEERING_DECISION", kw_only=True)
+    status: str = field(default="PROPOSED", kw_only=True)  # PROPOSED | ACTIVE | RETIRED
 
 
 class AgentFactory:

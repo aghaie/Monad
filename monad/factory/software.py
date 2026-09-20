@@ -11,6 +11,8 @@ from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone
 from pathlib import Path
 
+from monad.core.monad import Monad
+
 PIPELINE = ("PROBLEM", "REQUIREMENTS", "RESEARCH", "ARCHITECTURE", "PROTOTYPE",
             "IMPLEMENTATION", "TEST", "SECURITY_REVIEW", "USER_EXPERIENCE",
             "DEPLOYMENT", "OBSERVATION", "IMPROVEMENT")
@@ -50,7 +52,8 @@ def rank(candidates: list[ProblemCandidate]) -> list[tuple[float, ProblemCandida
 
 
 @dataclass
-class Product:
+class Product(Monad):
+    """A Monad of kind `product`; `stage`/`outcome` are the domain state, root `status` stays OPEN."""
     name: str
     why: str
     who: str
@@ -60,7 +63,8 @@ class Product:
     stage: str = "PROBLEM"
     history: list[dict] = field(default_factory=list)
     outcome: str = "UNKNOWN"   # UNKNOWN | USEFUL | NOT_USEFUL (real-world, not claimed)
-    created: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    kind: str = field(default="product", kw_only=True)
+    origin: str = field(default="ENGINEERING_DECISION", kw_only=True)
 
     def validate(self) -> list[str]:
         return [f"missing {k}" for k in ("why", "who", "problem", "solution", "measurement")

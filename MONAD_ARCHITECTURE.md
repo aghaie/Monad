@@ -40,9 +40,9 @@ Model-agnostic · provider-agnostic · self-hostable · portable · versioned ·
 | `monad/core/monad.py` | Root entity: every stored thing is a `Monad` (id · kind · origin · created · status · source · supersedes · schema); `Link` = relation as a record; `MonadStore` append-only JSONL, unknown fields ignored, `current(source)` follows `supersedes` | RUNNING, tested |
 | `monad/reports.py` | Kind `report`: every Markdown in `reports/` and `docs/` is registered as a Monad (path + sha256, idempotent; edit ⇒ new record superseding the old) — run by every loop iteration | RUNNING, tested |
 | `monad/knowledge/store.py` | Knowledge Engine: `Claim` is a `Monad` of kind `claim` (root fields inherited, same names ⇒ no data migration); append-only JSONL claim store with origin class, evidence links, confidence, contradiction detection, staleness | RUNNING, tested |
-| `monad/skills/registry.py` | Skill Factory: skill spec (name, purpose, inputs, outputs, tools, dependencies, limitations, tests, evaluation, version, changelog), register/version/rollback | RUNNING, tested |
-| `monad/agents/factory.py` | Agent Factory: agent spec bound to skills and constitutional constraints; necessity check | RUNNING, tested |
-| `monad/factory/software.py` | Software Factory: product pipeline record (problem → requirements → … → observation) with WHY/WHO/PROBLEM/SOLUTION/MEASUREMENT | RUNNING, tested |
+| `monad/skills/registry.py` | Skill Factory: `SkillSpec` is a `Monad` of kind `skill` (one id per name@version); skill spec (name, purpose, inputs, outputs, tools, dependencies, limitations, tests, evaluation, version, changelog), register/version/rollback | RUNNING, tested |
+| `monad/agents/factory.py` | Agent Factory: `AgentSpec` is a `Monad` of kind `agent`; agent spec bound to skills and constitutional constraints; necessity check | RUNNING, tested |
+| `monad/factory/software.py` | Software Factory: `Product` is a `Monad` of kind `product`; pipeline record (problem → requirements → … → observation) with WHY/WHO/PROBLEM/SOLUTION/MEASUREMENT | RUNNING, tested |
 | `monad/evaluation/evaluator.py` | Evaluation Engine: compare candidate metrics vs baseline; verdict DEPLOY / ROLLBACK / INCONCLUSIVE | RUNNING, tested |
 | `monad/core/quran_engine.py` | Quranic Decision Engine: constitutional checklist for significant decisions, returns VALID / INVALID / UNVERIFIED with reasons | RUNNING, tested |
 | `monad/core/loop.py` | Global Creation Loop: one iteration = observe → read sources → … → compare with previous iteration (Article 14, via Evaluation Engine) → report, with state persisted | RUNNING, tested |
@@ -60,7 +60,7 @@ Model-agnostic · provider-agnostic · self-hostable · portable · versioned ·
 | pytest | testing | stdlib unittest |
 
 ## Data
-Everything is plain JSONL/Markdown in the repo: readable by a human, diffable by git, portable to any host.
+Every stored record is a `Monad` (kinds: claim · skill · agent · product · report · link). Stores stay per kind (`data/*.jsonl`); `scripts/migrate_monad_root.py` was the one-time, idempotent migration (2026-09-21). Everything is plain JSONL/Markdown in the repo: readable by a human, diffable by git, portable to any host.
 
 ## Evolution path
 CLI (v0.1) → local web app (Flask already available) → API → self-hosted runtime with scheduled iterations → Telegram interface (existing skill of the founder) → distributed agents.
