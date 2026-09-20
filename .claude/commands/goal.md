@@ -13,10 +13,11 @@ description: یک چرخهٔ رشد بی‌سرپرست مناد (شبانه). �
    2. `next_step` ثبت‌شده در loop_state، اگر «needs Engine» دارد، یعنی نیازمند توست: انجامش بده (مثلاً داوری منابع `data/sources.txt` → claim با origin و منبع).
    3. اولین `[ ]` نقشهٔ راه که بدون علی و بدون کلید API و بدون میزبان شدنی است.
    4. اگر هیچ‌کدام نبود: یک sweep تناقض/کهنگی و گزارش «چیزی برای ساختن نبود» — ساختنِ بی‌درد ممنوع (مادهٔ ۱۸).
-3. **اجرا با TDD** (`superpowers:test-driven-development`)، کوتاه‌ترین diff، بدون وابستگی جدید، فقط stdlib. تست: `.venv/bin/python -m pytest -q` (هرگز python3 سیستمی).
-4. **بسنج**: `.venv/bin/python -m monad iterate` → حکم DEPLOY / ROLLBACK / INCONCLUSIVE. ROLLBACK → همان چرخه برگردان (`git revert`)، پنهان نکن.
-5. **گزارش**: `reports/REPORT_0NN.md` با ۶ بخش گزارش‌های قبلی (فهمیدم / ساختم / قابل استفاده / بهتر شد / شکست‌ها / قدم بعد)؛ FACT / HYPOTHESIS / UNKNOWN برچسب بخورد.
-6. **commit با WHY / WHAT / EXPECTED BENEFIT / ACTUAL RESULT** و `git push origin main`.
+3. **اول سنجه، بعد ساختن** (درسِ اندازه‌گیری‌شدهٔ شب ۱۴۰۵/۰۷/۰۱، گزارش‌های ۱۴ و ۱۵): پیش از نوشتن کد بگو این چرخه کدام عدد در `ITERATION_METRICS` را جابه‌جا می‌کند. اگر هیچ سنجه‌ای آن کار را نمی‌بیند، **اول سنجه را با TDD اضافه کن، بعد کار را بکن** — وگرنه کار واقعی انجام می‌شود و حکم INCONCLUSIVE می‌آید. سنجهٔ تازه هرگز نباید ثبتِ صادقانه را جریمه کند (نمونه: «نامعلوم‌های پاسخ‌گرفته» درست است، «نامعلوم‌های باز» غلط، چون دومی پنهان‌کاری را پاداش می‌دهد).
+4. **اجرا با TDD** (`superpowers:test-driven-development`)، کوتاه‌ترین diff، بدون وابستگی جدید، فقط stdlib. تست: `.venv/bin/python -m pytest -q` (هرگز python3 سیستمی). ثبت هر داوری یا پاسخ با `monad claim <ORIGIN> <source> <text> [--evidence id,id --tags extracted --supersedes id --expires days]` — نه اسکریپت موقت.
+5. **بسنج**: `.venv/bin/python -m monad iterate` → حکم DEPLOY / ROLLBACK / INCONCLUSIVE. ROLLBACK → همان چرخه برگردان (`git revert`)، پنهان نکن.
+6. **گزارش**: `reports/REPORT_0NN.md` با ۶ بخش گزارش‌های قبلی (فهمیدم / ساختم / قابل استفاده / بهتر شد / شکست‌ها / قدم بعد)؛ FACT / HYPOTHESIS / UNKNOWN برچسب بخورد.
+7. **commit با WHY / WHAT / EXPECTED BENEFIT / ACTUAL RESULT** و `git push origin main`.
 
 ## خط قرمزها
 - کاربرد ساختگی ممنوع: هیچ claim با تگ `usage:*` جز از راه واقعی `/sync` یا `ingest`. سنجهٔ کاربرد را با دست بالا نبر (مادهٔ ۷).
