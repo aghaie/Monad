@@ -177,9 +177,17 @@ def test_loop_measures_judged_sources_and_points_at_the_unjudged(tmp_path, monke
     assert r1.observations["judged_sources"] == 0
     assert "https://a.test/" in r1.next_step
 
+    raw = [c for c in loop.knowledge.all() if c.source == "https://a.test/"][-1]
     loop.knowledge.add(Claim(text="https://a.test/ states: hello", origin="DATA", confidence=0.6,
-                             source="https://a.test/", tags=["extracted"]))
+                             source="https://a.test/", evidence=[raw.id], tags=["extracted"]))
     r2 = L.MonadLoop(tmp_path).iterate()
     assert r2.observations["judged_sources"] == 1
     assert "https://b.test/" in r2.next_step and "https://a.test/" not in r2.next_step
     assert L.iteration_metrics(dataclasses.asdict(r2))["judged_sources"] == 1
+
+    # the page changes: yesterday's judgement was about yesterday's text, so the source
+    # counts as unjudged again — otherwise a watched page could change unnoticed for ever.
+    monkeypatch.setattr(L, "fetch", lambda url: b"<p>hello, and something new</p>")
+    r3 = L.MonadLoop(tmp_path).iterate()
+    assert r3.observations["judged_sources"] == 0
+    assert "https://a.test/" in r3.next_step

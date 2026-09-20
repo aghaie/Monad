@@ -26,7 +26,8 @@ No version is final. Each is a stage.
 ## v0.3 — World Observer
 - [x] 2026-09-18: first reading (اقرأ) — `monad read <url>` (web_research 0.2.0) and `monad quran` (quranic_reference 0.2.0), engine-free
 - [x] 2026-09-18: World Observer v0.2 — `data/sources.txt` re-read each iteration; new/changed/unchanged by text hash; failures recorded as BLOCKED
-- [ ] Source ingestion (GitHub, papers) with SOURCE_EVALUATION skill — evaluation part still needs Engine
+- [x] 2026-09-21: source *evaluation* path exists — `monad claim ... --tags extracted --evidence <raw id>` records what a source states, and the loop measures `judged_sources` against the current text of each page, not the URL (reports 014, 018)
+- [ ] Source *ingestion* from GitHub and papers (the evaluation half is done; the fetch-and-parse half is not)
 - [ ] Automated need/opportunity discovery scoring (Human Need, Truth, Utility, Impact, Feasibility, Cost, Risk, Reach, Urgency)
 - [x] contradiction + staleness sweeps run every iteration (STALE never deleted)
 

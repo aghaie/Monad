@@ -222,7 +222,15 @@ class MonadLoop:
             origin="DATA", confidence=1.0, source="monad.core.loop.iterate",
             tags=["self-observation"], expires_days=30))
         sources = rec.observations.get("sources", {})
-        judged = {c.source for c in self.knowledge.all() if "extracted" in c.tags}
+        # A judgement is about the text that was read, not about the URL: when a watched page
+        # changes, its newest raw claim has no judgement yet and the source is unjudged again.
+        claims = self.knowledge.all()
+        newest = {}
+        for c in claims:
+            if "web_research" in c.tags and c.created >= newest.get(c.source, ("",))[0]:
+                newest[c.source] = (c.created, c.id)
+        judged = {c.source for c in claims if "extracted" in c.tags
+                  and newest.get(c.source, ("", ""))[1] in c.evidence}
         unjudged = [u for u in sources if u not in judged]
         rec.observations["judged_sources"] = len(sources) - len(unjudged)
         rec.did_real_work = bool(rec.capability_gaps) or bool(rec.products) or bool(sources)
