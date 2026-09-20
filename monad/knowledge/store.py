@@ -145,8 +145,20 @@ class KnowledgeStore:
     def stale(self) -> list[Claim]:
         return [c for c in self.all() if c.is_stale()]
 
+    def _questions(self) -> tuple[list[Claim], set[str]]:
+        answered = {c.supersedes for c in self.all() if c.supersedes}
+        return [c for c in self.all() if c.origin == "UNKNOWN" or c.status == "UNKNOWN"], answered
+
     def unknowns(self) -> list[Claim]:
-        return [c for c in self.all() if c.origin == "UNKNOWN" or c.status == "UNKNOWN"]
+        """Open questions: an UNKNOWN stays open until some later claim supersedes it."""
+        qs, answered = self._questions()
+        return [c for c in qs if c.id not in answered]
+
+    def resolved_unknowns(self) -> list[Claim]:
+        """Questions some later claim answered. Counted as progress — so that *recording*
+        an unknown is never punished, only leaving it unanswered (Article 4: no conjecture)."""
+        qs, answered = self._questions()
+        return [c for c in qs if c.id in answered]
 
     def by_origin(self, origin: str) -> list[Claim]:
         return [c for c in self.all() if c.origin == origin]

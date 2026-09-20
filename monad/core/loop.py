@@ -27,7 +27,7 @@ from monad.reports import register_reports
 
 # What "better" means for an iteration, measured against the previous one (Article 14).
 ITERATION_METRICS = [
-    Metric("active_skills"), Metric("sources_read"), Metric("judged_sources"), Metric("products"),
+    Metric("active_skills"), Metric("sources_read"), Metric("judged_sources"), Metric("unknowns_resolved"), Metric("products"),
     Metric("usage_claims"),   # Article 20: real use by real users, ingested from product exports
     Metric("capability_gaps", higher_is_better=False, critical=True),
     Metric("contradictions", higher_is_better=False),
@@ -42,6 +42,7 @@ def iteration_metrics(rec: dict) -> dict[str, float]:
         "active_skills": obs.get("active_skills", 0),
         "sources_read": len([v for v in obs.get("sources", {}).values() if v != "failed"]),
         "judged_sources": obs.get("judged_sources", 0),
+        "unknowns_resolved": obs.get("unknowns_resolved", 0),
         "products": obs.get("products", 0),
         "usage_claims": sum(u.get("claims", 0) for u in obs.get("usage", {}).values()),
         "capability_gaps": len(rec.get("capability_gaps", [])),
@@ -166,6 +167,7 @@ class MonadLoop:
 
     def identify_unknowns(self, rec: IterationRecord) -> None:
         rec.unknowns = [c.text for c in self.knowledge.unknowns()]
+        rec.observations["unknowns_resolved"] = len(self.knowledge.resolved_unknowns())
         rec.contradictions = len(self.knowledge.contradictions())
         stale = self.knowledge.stale()
         rec.stale_claims = len(stale)

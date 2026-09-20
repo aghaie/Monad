@@ -1,18 +1,18 @@
 {
-  "iterations": 21,
+  "iterations": 23,
   "last": {
-    "number": 21,
-    "started": "2026-09-20T22:38:55.496836+00:00",
+    "number": 23,
+    "started": "2026-09-20T22:47:53.813247+00:00",
     "engine": "session",
     "observations": {
       "reports_registered": 0,
-      "monads": 18,
-      "claims": 50,
+      "monads": 19,
+      "claims": 55,
       "skills": 9,
       "active_skills": 9,
       "agents": 0,
       "products": 1,
-      "git_head": "9bc5e6b",
+      "git_head": "a68514d",
       "usage": {
         "mizan": {
           "claims": 5,
@@ -27,10 +27,11 @@
         "https://docs.python.org/3/whatsnew/index.html": "unchanged",
         "https://tanzil.net/docs/download": "unchanged"
       },
+      "unknowns_resolved": 1,
       "judged_sources": 3
     },
     "unknowns": [
-      "نامعلوم: آیا فایل محلی quran-simple.csv همان نسخهٔ ۱٫۱ تنزیل است؟ MANIFEST فقط مبدأ واردکردن (monad-old، ۱۴۰۵/۰۶/۲۷) را ثبت کرده، نه شمارهٔ نسخه. برای پاسخ باید متن رسمی نسخهٔ ۱٫۱ دریافت و مقایسه شود."
+      "نامعلومِ باریک‌شده: آن ۶ اختلاف از کجاست؟ دو فرضیه، هیچ‌کدام آزموده نشده: (۱) فایل محلی از نسخهٔ قدیمی‌تر تنزیل (۱٫۰) آمده؛ (۲) خط‌لولهٔ monad-old هنگام واردکردن، الف کوتاه را حذف و NFC کرده و این ۶ مورد از همان‌جاست. نسخهٔ ۱٫۰ دیگر از tanzil.net قابل دریافت نیست."
     ],
     "capability_gaps": [],
     "contradictions": 0,
@@ -46,17 +47,17 @@
     "learned": [
       "constitutional self-check: UNVERIFIED"
     ],
-    "next_step": "resolve unknown: نامعلوم: آیا فایل محلی quran-simple.csv همان نسخهٔ ۱٫۱ تنزیل است؟ MANIFEST فقط مبدأ واردکردن (monad-old، ۱۴۰۵/۰۶/۲۷) را ",
+    "next_step": "resolve unknown: نامعلومِ باریک‌شده: آن ۶ اختلاف از کجاست؟ دو فرضیه، هیچ‌کدام آزموده نشده: (۱) فایل محلی از نسخهٔ قدیمی‌تر تنزیل (۱٫۰) آم",
     "improvement": {
       "verdict": "DEPLOY",
       "reasons": [
         "all measured metrics improved or held"
       ],
       "deltas": {
-        "judged_sources": 3
+        "unknowns_resolved": 1
       }
     },
     "did_real_work": true,
-    "finished": "2026-09-20T22:38:56.988323+00:00"
+    "finished": "2026-09-20T22:47:55.023245+00:00"
   }
 }
