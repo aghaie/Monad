@@ -66,11 +66,16 @@ def main(argv: list[str] | None = None) -> int:
             print("no export found: in Mizan press «خروجی JSON», then run: python3 -m monad ingest [file]")
             return 1
         print(f"ingested {ingest(loop.knowledge, path)} new claim(s) from {path}\nusage: {usage(loop.knowledge)}")
+    elif cmd == "monads":
+        kind = argv[1] if len(argv) >= 2 else None
+        for m in loop.monads.all():
+            if kind is None or m.kind == kind:
+                print(f"{m.id}  {m.kind:8s} [{m.origin}] {m.source}" + (f"  ⇐ {m.supersedes}" if m.supersedes else ""))
     elif cmd == "contradictions":
         for a, b in loop.knowledge.contradictions():
             print(f"[{a.origin}] {a.text}\n   ⟂ [{b.origin}] {b.text}")
     else:
-        print("usage: python -m monad iterate | status | skills | contradictions | read <url> | quran <sura:ayah> | quran search <term> | ask <prompt> | qa | answer <id> <text> | serve [port] | ingest [export.jsonl] | skill add <spec.json>")
+        print("usage: python -m monad iterate | status | skills | contradictions | read <url> | quran <sura:ayah> | quran search <term> | ask <prompt> | qa | answer <id> <text> | serve [port] | ingest [export.jsonl] | monads [kind] | skill add <spec.json>")
         return 1
     return 0
 

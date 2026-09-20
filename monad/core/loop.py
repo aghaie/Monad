@@ -22,6 +22,8 @@ from monad.evaluation import Metric, evaluate
 from monad.core.quran_engine import Decision, check
 from monad.web import content_sha, fetch, html_to_text, read_url
 from monad.usage import ingest, usage
+from monad.core.monad import MonadStore
+from monad.reports import register_reports
 
 # What "better" means for an iteration, measured against the previous one (Article 14).
 ITERATION_METRICS = [
@@ -82,6 +84,7 @@ class MonadLoop:
         self.skills = SkillRegistry(data / "skills.jsonl")
         self.agents = AgentFactory(data / "agents.jsonl", self.skills)
         self.factory = SoftwareFactory(data / "products.jsonl")
+        self.monads = MonadStore(data / "monads.jsonl")   # root store: every stored thing is a Monad
         self.engine = get_engine(engine)
         self.state_path = data / "loop_state.json"
         self.state = json.loads(self.state_path.read_text()) if self.state_path.exists() else {"iterations": 0}
@@ -90,7 +93,10 @@ class MonadLoop:
     def observe_world(self, rec: IterationRecord) -> None:
         # v0.1: MONAD observes *itself* and its repository (Section XXV). External
         # observation requires the web_research skill — recorded as a gap.
+        rec.observations["reports_registered"] = len(register_reports(self.monads, self.root))
         rec.observations = {
+            **rec.observations,
+            "monads": len(self.monads.all()),
             "claims": len(self.knowledge.all()),
             "skills": len(self.skills.names()),
             "active_skills": len([n for n in self.skills.names()

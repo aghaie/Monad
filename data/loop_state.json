@@ -1,16 +1,18 @@
 {
-  "iterations": 15,
+  "iterations": 16,
   "last": {
-    "number": 15,
-    "started": "2026-09-20T10:26:59.107960+00:00",
+    "number": 16,
+    "started": "2026-09-20T21:45:13.673814+00:00",
     "engine": "session",
     "observations": {
-      "claims": 28,
+      "reports_registered": 12,
+      "monads": 12,
+      "claims": 29,
       "skills": 9,
       "active_skills": 9,
       "agents": 0,
       "products": 1,
-      "git_head": "6ca02c9",
+      "git_head": "d0fea25",
       "usage": {
         "mizan": {
           "claims": 0
@@ -18,7 +20,7 @@
       },
       "sources": {
         "https://tanzil.net/docs/quran_text_types": "unchanged",
-        "https://docs.python.org/3/whatsnew/index.html": "unchanged",
+        "https://docs.python.org/3/whatsnew/index.html": "changed",
         "https://tanzil.net/docs/download": "unchanged"
       }
     },
@@ -35,19 +37,18 @@
     ],
     "blocked": [],
     "learned": [
+      "extracted 3 statements from https://docs.python.org/3/whatsnew/index.html",
       "constitutional self-check: UNVERIFIED"
     ],
     "next_step": "first real use of mizan: `python3 -m monad serve`, then work in the product (it syncs itself)",
     "improvement": {
-      "verdict": "DEPLOY",
+      "verdict": "INCONCLUSIVE",
       "reasons": [
-        "all measured metrics improved or held"
+        "no measurable change"
       ],
-      "deltas": {
-        "blocked": 2
-      }
+      "deltas": {}
     },
     "did_real_work": true,
-    "finished": "2026-09-20T10:27:01.065163+00:00"
+    "finished": "2026-09-20T21:45:15.440085+00:00"
   }
 }

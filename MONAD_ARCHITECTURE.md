@@ -37,6 +37,8 @@ Model-agnostic · provider-agnostic · self-hostable · portable · versioned ·
 
 | Module | Responsibility | Status |
 |---|---|---|
+| `monad/core/monad.py` | Root entity: every stored thing is a `Monad` (id · kind · origin · created · status · source · supersedes · schema); `Link` = relation as a record; `MonadStore` append-only JSONL, unknown fields ignored, `current(source)` follows `supersedes` | RUNNING, tested |
+| `monad/reports.py` | Kind `report`: every Markdown in `reports/` and `docs/` is registered as a Monad (path + sha256, idempotent; edit ⇒ new record superseding the old) — run by every loop iteration | RUNNING, tested |
 | `monad/knowledge/store.py` | Knowledge Engine: append-only JSONL claim store with origin class, evidence links, confidence, contradiction detection, staleness | RUNNING, tested |
 | `monad/skills/registry.py` | Skill Factory: skill spec (name, purpose, inputs, outputs, tools, dependencies, limitations, tests, evaluation, version, changelog), register/version/rollback | RUNNING, tested |
 | `monad/agents/factory.py` | Agent Factory: agent spec bound to skills and constitutional constraints; necessity check | RUNNING, tested |
