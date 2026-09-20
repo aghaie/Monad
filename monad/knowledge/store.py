@@ -8,24 +8,12 @@ from __future__ import annotations
 
 import json
 import re
-import uuid
 from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Iterable
 
-ORIGIN_CLASSES = (
-    "REVELATION",
-    "QURANIC_PRINCIPLE",
-    "UNDERSTANDING",
-    "DATA",
-    "RATIONAL_ANALYSIS",
-    "HYPOTHESIS",
-    "EMPIRICAL_RESULT",
-    "OPINION",
-    "ENGINEERING_DECISION",
-    "UNKNOWN",  # Article 16: MONAD must be able to say "I don't know"
-)
+from monad.core.monad import Monad, ORIGIN_CLASSES  # noqa: F401  (re-exported)
 
 STATUSES = ("OPEN", "SUPPORTED", "REFUTED", "STALE", "UNKNOWN")
 
@@ -35,22 +23,18 @@ def _now() -> str:
 
 
 @dataclass
-class Claim:
-    text: str
-    origin: str
+class Claim(Monad):
+    """A Monad of kind `claim`. id · origin · source · status · created come from the root."""
+    text: str                         # origin is inherited (keyword, required: "" is rejected by the root)
+    kind: str = field(default="claim", kw_only=True)
     confidence: float = 0.5           # 0..1, proportional to evidence (Article 4)
-    source: str = ""                  # provenance: URL, file, person, command
     evidence: list[str] = field(default_factory=list)   # ids of supporting claims
     contradicts: list[str] = field(default_factory=list)  # ids of contradicting claims
     tags: list[str] = field(default_factory=list)
-    status: str = "OPEN"
-    created: str = field(default_factory=_now)
     expires_days: int | None = None   # staleness horizon; None = timeless
-    id: str = field(default_factory=lambda: uuid.uuid4().hex[:12])
 
     def __post_init__(self) -> None:
-        if self.origin not in ORIGIN_CLASSES:
-            raise ValueError(f"origin must be one of {ORIGIN_CLASSES}, got {self.origin!r}")
+        super().__post_init__()
         if not 0.0 <= self.confidence <= 1.0:
             raise ValueError("confidence must be within [0, 1]")
         if self.status not in STATUSES:

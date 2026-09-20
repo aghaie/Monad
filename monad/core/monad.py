@@ -14,14 +14,25 @@ from dataclasses import dataclass, field, asdict, fields
 from datetime import datetime, timezone
 from pathlib import Path
 
-from monad.knowledge.store import ORIGIN_CLASSES
+ORIGIN_CLASSES = (
+    "REVELATION",
+    "QURANIC_PRINCIPLE",
+    "UNDERSTANDING",
+    "DATA",
+    "RATIONAL_ANALYSIS",
+    "HYPOTHESIS",
+    "EMPIRICAL_RESULT",
+    "OPINION",
+    "ENGINEERING_DECISION",
+    "UNKNOWN",  # Article 16: MONAD must be able to say "I don't know"
+)
 
 
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-@dataclass
+@dataclass(kw_only=True)   # kw_only: subclasses keep positional required fields (Python ≥3.10)
 class Monad:
     kind: str = ""
     origin: str = ""
@@ -39,7 +50,7 @@ class Monad:
             raise ValueError(f"origin must be one of {ORIGIN_CLASSES}, got {self.origin!r}")
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Link(Monad):
     kind: str = "link"
     src: str = ""

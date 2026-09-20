@@ -38,3 +38,15 @@ def test_reports_become_monads_idempotently_and_supersede_on_change(tmp_path):
     v2 = register_reports(s, tmp_path)
     assert len(v2) == 1 and v2[0].supersedes == new[0].id     # change → new record, old one kept
     assert len(s.by_kind("report")) == 2 and s.current("reports/REPORT_001.md").id == v2[0].id
+
+
+def test_claim_is_a_monad_and_old_rows_still_load(tmp_path):
+    from monad.knowledge import Claim, KnowledgeStore
+    c = Claim(text="x", origin="DATA", source="t")
+    assert isinstance(c, Monad) and c.kind == "claim" and c.supersedes == "" and c.schema == 1
+    ks = KnowledgeStore(tmp_path / "k.jsonl")
+    with ks.path.open("a") as fh:                 # a row written before the root existed
+        fh.write('{"text":"old","origin":"DATA","source":"t","id":"old1","created":"2026-01-01T00:00:00+00:00"}\n')
+    old = ks.get("old1")
+    assert old.kind == "claim" and old.text == "old" and old.created.startswith("2026-01-01")
+    assert ks.get(ks.add(c).id).text == "x"

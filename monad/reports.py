@@ -12,7 +12,7 @@ from monad.core.monad import Monad, MonadStore, KINDS
 DIRS = ("reports", "docs")
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Report(Monad):
     kind: str = "report"
     origin: str = "RATIONAL_ANALYSIS"
