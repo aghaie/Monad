@@ -143,3 +143,33 @@ def test_persian_contradiction(tmp_path):
     ks.add(Claim(text="این ابزار مفید است", origin="HYPOTHESIS", source="علی"))
     ks.add(Claim(text="این ابزار مفید نیست", origin="EMPIRICAL_RESULT", source="نظرسنجی"))
     assert len(ks.contradictions()) == 1
+
+
+def test_self_check_reads_answers_from_claims_and_expires_them(tmp_path, monkeypatch):
+    """Two principles ask for judgement, not a literal: the loop reads the Engine's recorded
+    answer (a claim tagged `selfcheck:<principle>`) and forgets it once the claim goes stale,
+    so a self-approval can never stand for ever."""
+    from monad.core import loop as L
+    from monad.knowledge import Claim
+    (tmp_path / "data").mkdir()
+    (tmp_path / "data" / "sources.txt").write_text("")
+    monkeypatch.setattr(L, "REQUIRED_SKILLS", [])
+    loop = L.MonadLoop(tmp_path)
+
+    r1 = loop.iterate()
+    assert r1.observations["unverified_principles"] == 2
+    assert any("self-check" in b for b in r1.blocked)
+
+    for key in ("reform_not_appearance", "better_purer_path"):
+        loop.knowledge.add(Claim(text=f"yes, because …", origin="RATIONAL_ANALYSIS", confidence=0.8,
+                                 source="test", tags=[f"selfcheck:{key}", "answer:true"], expires_days=7))
+    r2 = L.MonadLoop(tmp_path).iterate()
+    assert r2.observations["unverified_principles"] == 0
+    assert "constitutional self-check: VALID" in r2.learned
+
+    for c in loop.knowledge.all():                      # a stale answer stops counting
+        if any(t.startswith("selfcheck:") for t in c.tags):
+            loop.knowledge.update(c.id, created="2020-01-01T00:00:00+00:00")
+    r3 = L.MonadLoop(tmp_path).iterate()
+    assert r3.observations["unverified_principles"] == 2
+    assert L.iteration_metrics({"observations": {}})["unverified_principles"] == 2  # old records

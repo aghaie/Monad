@@ -43,6 +43,7 @@ def main(argv: list[str] | None = None) -> int:
         c = loop.knowledge.add(Claim(
             text=" ".join(pos[2:]), origin=pos[0], source=pos[1],
             supersedes=flags.get("supersedes") or "",
+            expires_days=int(flags["expires"]) if flags.get("expires") else None,
             confidence=float(flags.get("conf") or 0.6),
             evidence=(flags.get("evidence") or "").split(",") if flags.get("evidence") else [],
             tags=((flags.get("tags") or "").split(",") if flags.get("tags") else []) + ["engine:session"]))
@@ -90,7 +91,7 @@ def main(argv: list[str] | None = None) -> int:
         for a, b in loop.knowledge.contradictions():
             print(f"[{a.origin}] {a.text}\n   ⟂ [{b.origin}] {b.text}")
     else:
-        print("usage: python -m monad iterate | status | skills | contradictions | read <url> | claim <ORIGIN> <source> <text> [--conf c --evidence id,id --tags a,b --supersedes id] | quran <sura:ayah> | quran search <term> | ask <prompt> | qa | answer <id> <text> | serve [port] | ingest [export.jsonl] | monads [kind] | skill add <spec.json>")
+        print("usage: python -m monad iterate | status | skills | contradictions | read <url> | claim <ORIGIN> <source> <text> [--conf c --evidence id,id --tags a,b --supersedes id --expires days] | quran <sura:ayah> | quran search <term> | ask <prompt> | qa | answer <id> <text> | serve [port] | ingest [export.jsonl] | monads [kind] | skill add <spec.json>")
         return 1
     return 0
 

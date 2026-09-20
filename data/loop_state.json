@@ -1,18 +1,18 @@
 {
-  "iterations": 24,
+  "iterations": 26,
   "last": {
-    "number": 24,
-    "started": "2026-09-20T22:49:38.237391+00:00",
+    "number": 26,
+    "started": "2026-09-20T22:51:58.615845+00:00",
     "engine": "session",
     "observations": {
-      "reports_registered": 1,
-      "monads": 20,
-      "claims": 62,
+      "reports_registered": 0,
+      "monads": 21,
+      "claims": 66,
       "skills": 9,
       "active_skills": 9,
       "agents": 0,
       "products": 1,
-      "git_head": "e74cd91",
+      "git_head": "7d6d21d",
       "usage": {
         "mizan": {
           "claims": 5,
@@ -29,6 +29,7 @@
         "https://tanzil.net/updates/": "unchanged"
       },
       "unknowns_resolved": 2,
+      "unverified_principles": 0,
       "judged_sources": 4
     },
     "unknowns": [],
@@ -44,21 +45,17 @@
     ],
     "blocked": [],
     "learned": [
-      "constitutional self-check: UNVERIFIED"
+      "constitutional self-check: VALID"
     ],
     "next_step": "contradictions/staleness sweep",
     "improvement": {
-      "verdict": "DEPLOY",
+      "verdict": "INCONCLUSIVE",
       "reasons": [
-        "all measured metrics improved or held"
+        "no measurable change"
       ],
-      "deltas": {
-        "sources_read": 1,
-        "judged_sources": 1,
-        "unknowns_resolved": 1
-      }
+      "deltas": {}
     },
     "did_real_work": true,
-    "finished": "2026-09-20T22:49:39.767092+00:00"
+    "finished": "2026-09-20T22:52:00.404931+00:00"
   }
 }

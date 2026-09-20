@@ -28,6 +28,7 @@ from monad.reports import register_reports
 # What "better" means for an iteration, measured against the previous one (Article 14).
 ITERATION_METRICS = [
     Metric("active_skills"), Metric("sources_read"), Metric("judged_sources"), Metric("unknowns_resolved"), Metric("products"),
+    Metric("unverified_principles", higher_is_better=False),
     Metric("usage_claims"),   # Article 20: real use by real users, ingested from product exports
     Metric("capability_gaps", higher_is_better=False, critical=True),
     Metric("contradictions", higher_is_better=False),
@@ -43,6 +44,9 @@ def iteration_metrics(rec: dict) -> dict[str, float]:
         "sources_read": len([v for v in obs.get("sources", {}).values() if v != "failed"]),
         "judged_sources": obs.get("judged_sources", 0),
         "unknowns_resolved": obs.get("unknowns_resolved", 0),
+        # iterations before this metric existed hardcoded exactly two unanswered principles,
+        # so their honest reading is 2 — not 0, which would flatter the past.
+        "unverified_principles": obs.get("unverified_principles", 2),
         "products": obs.get("products", 0),
         "usage_claims": sum(u.get("claims", 0) for u in obs.get("usage", {}).values()),
         "capability_gaps": len(rec.get("capability_gaps", [])),
@@ -188,13 +192,28 @@ class MonadLoop:
                         for p in self.factory.products()]
 
     def self_check(self, rec: IterationRecord) -> None:
+        """Eight principles the loop itself can honour by construction; two ask for a
+        judgement — «real reform, not cosmetics» and «was a cleaner path looked for» — and a
+        literal `True` there would be the very self-deception they forbid. So they are read
+        from the Engine's recorded answer (a claim tagged `selfcheck:<principle>`, with its
+        reason and source) and expire with that claim: no self-approval outlives its evidence."""
+        judged = {"reform_not_appearance": None, "better_purer_path": None}
+        for c in self.knowledge.all():
+            for key in judged:
+                if f"selfcheck:{key}" in c.tags and not c.is_stale():
+                    judged[key] = "answer:true" in c.tags
         d = Decision("run iteration", "continue the creation loop", {
             "truth_over_falsehood": True, "justice_no_oppression": True,
             "no_corruption": True, "no_deception": True, "trust_and_covenant": True,
             "no_waste": True, "knowledge_over_conjecture": True, "human_dignity": True,
-            "reform_not_appearance": None, "better_purer_path": None,
+            **judged,
         })
-        rec.learned.append(f"constitutional self-check: {check(d).result}")
+        result = check(d)
+        rec.observations["unverified_principles"] = len(result.unverified)
+        rec.learned.append(f"constitutional self-check: {result.result}")
+        if result.result != "VALID":   # said out loud, not buried in a log line
+            rec.blocked.append(f"constitutional self-check {result.result}: "
+                               f"{', '.join(result.unverified + result.violations)}")
 
     def learn(self, rec: IterationRecord) -> None:
         self.knowledge.add(Claim(
