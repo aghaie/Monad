@@ -17,17 +17,18 @@ No version is final. Each is a stage.
 - [x] 2026-09-18: git remote https://github.com/aghaie/Monad.git — history now lives outside the sandbox
 - [x] 2026-09-18: founder decision — no online host; product 1 is deployed as a local file (Pages workflow removed)
 - [x] 2026-09-20: Engine without any provider — `SessionEngine`: the agent/human at the terminal answers via `monad qa` / `monad answer`, answers stored in `data/engine_qa.jsonl` and reused offline (report 009)
-- [ ] Wire a hosted Engine adapter (needs an API key from Ali) — provider-agnostic interface already exists
+- [x] 2026-09-21: founder decision — no hosted Engine for now; `SessionEngine` (the Claude Code session) stays the Engine; revisit if a week of daily iterations is all INCONCLUSIVE (report 013)
 - [x] 2026-09-18: `monad serve` (stdlib http.server, no Flask) — Mizan on localhost with zero-step usage sync (`POST /sync`); verified end-to-end in Chromium
-- [x] 2026-09-18: usage hook — Mizan export → `python3 -m monad ingest` → claims tagged `usage:mizan` → `usage` in every iteration + `usage_claims` metric (0 until Ali exports for real)
-- [ ] Scheduled iterations (Ali can create a scheduled task that re-runs `python -m monad iterate`)
+- [x] 2026-09-18: usage hook — Mizan export → `python3 -m monad ingest` → claims tagged `usage:mizan` → `usage` in every iteration + `usage_claims` metric
+- [x] 2026-09-21: first real use — MONAD logged 5 claims about itself through Mizan's own `/sync`; iteration 19 = DEPLOY (`usage_claims` 0→5). Human use still open (report 013)
+- [x] 2026-09-21: daily iteration — launchd `com.monad.iterate` at 09:00 runs `.venv/bin/python -m monad iterate` (report 013)
 
 ## v0.3 — World Observer
 - [x] 2026-09-18: first reading (اقرأ) — `monad read <url>` (web_research 0.2.0) and `monad quran` (quranic_reference 0.2.0), engine-free
 - [x] 2026-09-18: World Observer v0.2 — `data/sources.txt` re-read each iteration; new/changed/unchanged by text hash; failures recorded as BLOCKED
 - [ ] Source ingestion (GitHub, papers) with SOURCE_EVALUATION skill — evaluation part still needs Engine
 - [ ] Automated need/opportunity discovery scoring (Human Need, Truth, Utility, Impact, Feasibility, Cost, Risk, Reach, Urgency)
-- [ ] Contradiction and staleness sweeps over the knowledge store
+- [x] contradiction + staleness sweeps run every iteration (STALE never deleted)
 
 ## v0.4 — Self-improvement under measurement
 - [x] 2026-09-18: `/monad` public skill (skills/monad/SKILL.md) — MONAD's cycle applied to any external project; RED/GREEN tested on a fixture project

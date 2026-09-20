@@ -1,0 +1,56 @@
+{
+  "number": 19,
+  "started": "2026-09-20T22:26:21.215109+00:00",
+  "engine": "session",
+  "observations": {
+    "reports_registered": 1,
+    "monads": 17,
+    "claims": 41,
+    "skills": 9,
+    "active_skills": 9,
+    "agents": 0,
+    "products": 1,
+    "git_head": "d021e09",
+    "usage": {
+      "mizan": {
+        "claims": 5,
+        "with_source_pct": 100,
+        "contradictions": 0,
+        "per_week": 35.0,
+        "since": "2026-09-20"
+      }
+    },
+    "sources": {
+      "https://tanzil.net/docs/quran_text_types": "unchanged",
+      "https://docs.python.org/3/whatsnew/index.html": "unchanged",
+      "https://tanzil.net/docs/download": "unchanged"
+    }
+  },
+  "unknowns": [],
+  "capability_gaps": [],
+  "contradictions": 0,
+  "stale_claims": 0,
+  "products": [
+    {
+      "name": "mizan",
+      "stage": "DEPLOYMENT",
+      "outcome": "UNKNOWN"
+    }
+  ],
+  "blocked": [],
+  "learned": [
+    "constitutional self-check: UNVERIFIED"
+  ],
+  "next_step": "judge what the sources said (needs Engine); until then: contradictions/staleness sweep",
+  "improvement": {
+    "verdict": "DEPLOY",
+    "reasons": [
+      "all measured metrics improved or held"
+    ],
+    "deltas": {
+      "usage_claims": 5
+    }
+  },
+  "did_real_work": true,
+  "finished": "2026-09-20T22:26:23.407673+00:00"
+}

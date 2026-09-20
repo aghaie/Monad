@@ -1,21 +1,25 @@
 {
-  "iterations": 18,
+  "iterations": 19,
   "last": {
-    "number": 18,
-    "started": "2026-09-20T22:02:29.042298+00:00",
+    "number": 19,
+    "started": "2026-09-20T22:26:21.215109+00:00",
     "engine": "session",
     "observations": {
-      "reports_registered": 0,
-      "monads": 15,
-      "claims": 35,
+      "reports_registered": 1,
+      "monads": 17,
+      "claims": 41,
       "skills": 9,
       "active_skills": 9,
       "agents": 0,
       "products": 1,
-      "git_head": "15fbd81",
+      "git_head": "d021e09",
       "usage": {
         "mizan": {
-          "claims": 0
+          "claims": 5,
+          "with_source_pct": 100,
+          "contradictions": 0,
+          "per_week": 35.0,
+          "since": "2026-09-20"
         }
       },
       "sources": {
@@ -39,15 +43,17 @@
     "learned": [
       "constitutional self-check: UNVERIFIED"
     ],
-    "next_step": "first real use of mizan: `python3 -m monad serve`, then work in the product (it syncs itself)",
+    "next_step": "judge what the sources said (needs Engine); until then: contradictions/staleness sweep",
     "improvement": {
-      "verdict": "INCONCLUSIVE",
+      "verdict": "DEPLOY",
       "reasons": [
-        "no measurable change"
+        "all measured metrics improved or held"
       ],
-      "deltas": {}
+      "deltas": {
+        "usage_claims": 5
+      }
     },
     "did_real_work": true,
-    "finished": "2026-09-20T22:02:35.396216+00:00"
+    "finished": "2026-09-20T22:26:23.407673+00:00"
   }
 }
