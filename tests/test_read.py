@@ -1,4 +1,6 @@
 """Tests for the two reading skills: web_research (monad.web) and quranic_reference (monad.quran)."""
+import pytest
+
 from monad.knowledge import KnowledgeStore
 from monad.web import html_to_text, read_url
 from monad.quran import Quran, strip_marks
@@ -135,3 +137,24 @@ def test_serve_sync_snapshots_and_ingests(tmp_path):
         assert (tmp_path / "data" / "usage" / "mizan.jsonl").read_text().count("\n") == 1
     finally:
         srv.shutdown()
+
+
+def test_session_engine_asks_then_remembers(tmp_path, monkeypatch):
+    """The reasoning engine can be the session at this terminal: no provider, no API key."""
+    from monad.core import engine as E, loop as L
+
+    qa = tmp_path / "engine_qa.jsonl"
+    with pytest.raises(E.Pending) as ex:  # nothing known yet → say so, never invent
+        E.SessionEngine(qa).complete("۲+۲ چند است؟")
+    qid = ex.value.id
+    assert E.SessionEngine(qa).pending()[0]["id"] == qid
+
+    E.answer(qa, qid, "۴")
+    assert E.SessionEngine(qa).complete("۲+۲ چند است؟") == "۴"   # fresh instance: read from disk
+    assert E.SessionEngine(qa).pending() == []
+
+    monkeypatch.setenv("MONAD_ENGINE", "session")
+    monkeypatch.setenv("MONAD_QA", str(qa))
+    (tmp_path / "data").mkdir()
+    r = L.MonadLoop(tmp_path).iterate()
+    assert r.engine == "session" and not [b for b in r.blocked if "no reasoning engine" in b]

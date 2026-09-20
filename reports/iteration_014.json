@@ -1,0 +1,53 @@
+{
+  "number": 14,
+  "started": "2026-09-20T10:26:02.692797+00:00",
+  "engine": "session",
+  "observations": {
+    "claims": 26,
+    "skills": 9,
+    "active_skills": 9,
+    "agents": 0,
+    "products": 1,
+    "git_head": "6ca02c9",
+    "usage": {
+      "mizan": {
+        "claims": 0
+      }
+    },
+    "sources": {
+      "https://tanzil.net/docs/quran_text_types": "unchanged",
+      "https://docs.python.org/3/whatsnew/index.html": "changed",
+      "https://tanzil.net/docs/download": "unchanged"
+    }
+  },
+  "unknowns": [],
+  "capability_gaps": [],
+  "contradictions": 0,
+  "stale_claims": 0,
+  "products": [
+    {
+      "name": "mizan",
+      "stage": "DEPLOYMENT",
+      "outcome": "UNKNOWN"
+    }
+  ],
+  "blocked": [
+    "engine session failed on https://docs.python.org/3/whatsnew/index.html: pending 3fd54183c64d: answer it with `python3 -m monad answer 3fd54183c64d \"<answer>\"`",
+    "1 unanswered question(s) for engine session: `python3 -m monad qa`"
+  ],
+  "learned": [
+    "constitutional self-check: UNVERIFIED"
+  ],
+  "next_step": "first real use of mizan: `python3 -m monad serve`, then work in the product (it syncs itself)",
+  "improvement": {
+    "verdict": "ROLLBACK",
+    "reasons": [
+      "blocked: regressed by 1"
+    ],
+    "deltas": {
+      "blocked": -1
+    }
+  },
+  "did_real_work": true,
+  "finished": "2026-09-20T10:26:04.752681+00:00"
+}

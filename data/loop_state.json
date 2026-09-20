@@ -1,16 +1,16 @@
 {
-  "iterations": 13,
+  "iterations": 15,
   "last": {
-    "number": 13,
-    "started": "2026-09-18T10:13:02.047265+00:00",
-    "engine": "null",
+    "number": 15,
+    "started": "2026-09-20T10:26:59.107960+00:00",
+    "engine": "session",
     "observations": {
-      "claims": 25,
+      "claims": 28,
       "skills": 9,
       "active_skills": 9,
       "agents": 0,
       "products": 1,
-      "git_head": "86afdea",
+      "git_head": "6ca02c9",
       "usage": {
         "mizan": {
           "claims": 0
@@ -33,9 +33,7 @@
         "outcome": "UNKNOWN"
       }
     ],
-    "blocked": [
-      "no reasoning engine configured (needs API key or local model)"
-    ],
+    "blocked": [],
     "learned": [
       "constitutional self-check: UNVERIFIED"
     ],
@@ -46,10 +44,10 @@
         "all measured metrics improved or held"
       ],
       "deltas": {
-        "active_skills": 1
+        "blocked": 2
       }
     },
     "did_real_work": true,
-    "finished": "2026-09-18T10:13:04.739270+00:00"
+    "finished": "2026-09-20T10:27:01.065163+00:00"
   }
 }

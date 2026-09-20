@@ -17,7 +17,7 @@ from monad.knowledge import Claim, KnowledgeStore
 from monad.skills import SkillRegistry
 from monad.agents import AgentFactory
 from monad.factory import SoftwareFactory
-from monad.core.engine import get_engine
+from monad.core.engine import Pending, get_engine
 from monad.evaluation import Metric, evaluate
 from monad.core.quran_engine import Decision, check
 from monad.web import content_sha, fetch, html_to_text, read_url
@@ -144,6 +144,9 @@ class MonadLoop:
         try:
             reply = self.engine.complete(text[:6000], system=self.JUDGE_SYSTEM)
             statements = json.loads(reply[reply.find("["):reply.rfind("]") + 1])
+        except Pending:  # asked, not answered yet: counted once, by identify_capability_gaps.
+            return       # An async engine answers after this run, so the extraction waits for
+                         # the next change of the page. Known ceiling, recorded not hidden.
         except Exception as e:  # unreachable server, bad JSON, ...
             rec.blocked.append(f"engine {self.engine.name} failed on {claim.source}: {str(e)[:120]}")
             return
@@ -167,6 +170,9 @@ class MonadLoop:
         rec.capability_gaps = self.skills.gaps(REQUIRED_SKILLS)
         if self.engine.name == "null":
             rec.blocked.append("no reasoning engine configured (needs API key or local model)")
+        elif q := self.engine.pending():  # asked, nobody answered: a gap, said out loud
+            rec.blocked.append(f"{len(q)} unanswered question(s) for engine {self.engine.name}: "
+                               f"`python3 -m monad qa`")
 
     def select_problem(self, rec: IterationRecord) -> None:
         rec.products = [{"name": p.name, "stage": p.stage, "outcome": p.outcome}

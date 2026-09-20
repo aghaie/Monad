@@ -40,7 +40,22 @@ def main(argv: list[str] | None = None) -> int:
             print(f"{v.tags[1]:8s} {v.text}")
         print(f"-- {len(hits)} ayah(s), origin=REVELATION, source={q and 'tanzil:quran-simple'}")
     elif cmd == "ask" and len(argv) >= 2:
-        print(f"[{loop.engine.name}] " + loop.engine.complete(" ".join(argv[1:])))
+        from monad.core.engine import Pending
+        try:
+            print(f"[{loop.engine.name}] " + loop.engine.complete(" ".join(argv[1:])))
+        except Pending as p:  # not known yet: recorded, not invented
+            print(f"[{loop.engine.name}] {p}")
+            return 1
+    elif cmd == "qa":
+        for q in loop.engine.pending():
+            print(f"{q['id']}  {q['prompt'][:160]}")
+    elif cmd == "answer" and len(argv) >= 3:
+        from monad.core.engine import answer as record
+        if not hasattr(loop.engine, "path"):
+            print(f"engine {loop.engine.name} does not queue questions")
+            return 1
+        record(loop.engine.path, argv[1], " ".join(argv[2:]))
+        print(f"answered {argv[1]}")
     elif cmd == "serve":
         from monad.serve import serve
         serve(ROOT, int(argv[1]) if len(argv) >= 2 else 8765)
@@ -55,7 +70,7 @@ def main(argv: list[str] | None = None) -> int:
         for a, b in loop.knowledge.contradictions():
             print(f"[{a.origin}] {a.text}\n   ⟂ [{b.origin}] {b.text}")
     else:
-        print("usage: python -m monad iterate | status | skills | contradictions | read <url> | quran <sura:ayah> | quran search <term> | ask <prompt> | serve [port] | ingest [export.jsonl] | skill add <spec.json>")
+        print("usage: python -m monad iterate | status | skills | contradictions | read <url> | quran <sura:ayah> | quran search <term> | ask <prompt> | qa | answer <id> <text> | serve [port] | ingest [export.jsonl] | skill add <spec.json>")
         return 1
     return 0
 

@@ -26,7 +26,8 @@ Model-agnostic · provider-agnostic · self-hostable · portable · versioned ·
 ├──────────────────────────────────────────────────────────────┤
 │  EVALUATION ENGINE  metrics · candidate vs baseline · verdict  │
 ├──────────────────────────────────────────────────────────────┤
-│  ENGINE ADAPTERS    NullEngine · (Anthropic | OpenAI | local)  │
+│  ENGINE ADAPTERS    SessionEngine (no provider) · NullEngine · │
+│                     (LM Studio | Anthropic | OpenAI | local)  │
 ├──────────────────────────────────────────────────────────────┤
 │  MEMORY             git (history) · JSONL stores · reports     │
 └──────────────────────────────────────────────────────────────┘
@@ -43,7 +44,7 @@ Model-agnostic · provider-agnostic · self-hostable · portable · versioned ·
 | `monad/evaluation/evaluator.py` | Evaluation Engine: compare candidate metrics vs baseline; verdict DEPLOY / ROLLBACK / INCONCLUSIVE | RUNNING, tested |
 | `monad/core/quran_engine.py` | Quranic Decision Engine: constitutional checklist for significant decisions, returns VALID / INVALID / UNVERIFIED with reasons | RUNNING, tested |
 | `monad/core/loop.py` | Global Creation Loop: one iteration = observe → read sources → … → compare with previous iteration (Article 14, via Evaluation Engine) → report, with state persisted | RUNNING, tested |
-| `monad/core/engine.py` | Engine adapter interface + NullEngine | RUNNING |
+| `monad/core/engine.py` | Engine adapters: NullEngine · SessionEngine (the terminal itself reasons; Q&A in `data/engine_qa.jsonl`, pending questions reported, never invented) · LMStudioEngine | RUNNING, tested |
 | `monad/web.py` | World Observer v0.2: read one URL (stdlib), store DATA claim with url + text-sha256 + staleness; loop re-reads `data/sources.txt` and stores only changes | RUNNING, tested |
 | `monad/quran.py` | Qur'anic reference layer: Tanzil text → REVELATION claims by sura:ayah, term search | RUNNING, tested |
 | `monad/cli.py` | `python -m monad …` | RUNNING |
@@ -53,7 +54,7 @@ Model-agnostic · provider-agnostic · self-hostable · portable · versioned ·
 |---|---|---|
 | Python 3 stdlib | runtime | Node/TypeScript port possible later |
 | git | memory/rollback | none needed — git is itself the portable standard |
-| LLM engine (none wired) | reasoning acceleration | Anthropic, OpenAI, Gemini, local (llama.cpp/Ollama). All behind `Engine` interface |
+| LLM engine (optional) | reasoning *acceleration*, never identity | session (default, no provider), Anthropic, OpenAI, Gemini, local (llama.cpp/Ollama). All behind `Engine` interface |
 | pytest | testing | stdlib unittest |
 
 ## Data
