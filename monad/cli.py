@@ -48,6 +48,9 @@ def main(argv: list[str] | None = None) -> int:
             evidence=(flags.get("evidence") or "").split(",") if flags.get("evidence") else [],
             tags=((flags.get("tags") or "").split(",") if flags.get("tags") else []) + ["engine:session"]))
         print(f"{c.id} [{c.origin}] {c.text[:120]}")
+    elif cmd == "changed" and len(argv) >= 2:
+        from monad.web import versions_diff
+        print(versions_diff(loop.knowledge, argv[1]) or "only one version kept for this url yet")
     elif cmd == "quran" and len(argv) >= 2:
         from monad.quran import Quran
         q = Quran()
@@ -91,7 +94,7 @@ def main(argv: list[str] | None = None) -> int:
         for a, b in loop.knowledge.contradictions():
             print(f"[{a.origin}] {a.text}\n   ⟂ [{b.origin}] {b.text}")
     else:
-        print("usage: python -m monad iterate | status | skills | contradictions | read <url> | claim <ORIGIN> <source> <text> [--conf c --evidence id,id --tags a,b --supersedes id --expires days] | quran <sura:ayah> | quran search <term> | ask <prompt> | qa | answer <id> <text> | serve [port] | ingest [export.jsonl] | monads [kind] | skill add <spec.json>")
+        print("usage: python -m monad iterate | status | skills | contradictions | read <url> | changed <url> | claim <ORIGIN> <source> <text> [--conf c --evidence id,id --tags a,b --supersedes id --expires days] | quran <sura:ayah> | quran search <term> | ask <prompt> | qa | answer <id> <text> | serve [port] | ingest [export.jsonl] | monads [kind] | skill add <spec.json>")
         return 1
     return 0
 

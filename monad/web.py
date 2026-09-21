@@ -64,12 +64,38 @@ def content_sha(raw: bytes) -> str:
     return "sha256:" + hashlib.sha256(html_to_text(raw.decode("utf-8", errors="replace"))[1].encode()).hexdigest()
 
 
+def _keep(store: KnowledgeStore, sha: str, text: str) -> None:
+    """Keep each version's full text beside the store: the claim holds an excerpt, so without
+    this MONAD can say *that* a page changed but never *what* changed."""
+    path = store.path.parent / "sources" / f"{sha.split(':')[-1]}.txt"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+
+
+def versions_diff(store: KnowledgeStore, url: str, context: int = 0) -> str:
+    """Unified diff between the two newest kept versions of `url` ("" if fewer than two)."""
+    import difflib
+    shas = [t for c in sorted(store.all(), key=lambda c: c.created)
+            if c.source == url and "web_research" in c.tags
+            for t in c.tags if t.startswith("sha256:")]
+    texts = []
+    for sha in shas[-2:]:
+        path = store.path.parent / "sources" / f"{sha.split(':')[-1]}.txt"
+        if path.exists():
+            texts.append(path.read_text(encoding="utf-8").split(" "))
+    if len(texts) < 2:
+        return ""
+    return "\n".join(difflib.unified_diff([" ".join(texts[0])], [" ".join(texts[1])],
+                                           "before", "after", lineterm="", n=context))
+
+
 def read_url(store: KnowledgeStore, url: str, *, fetcher: Callable[[str], bytes] = fetch,
              excerpt_chars: int = 500, expires_days: int = 30) -> Claim:
     """Read one source and record it. The claim text is what the source said (excerpt);
     origin DATA; confidence 1.0 means "this is really what the URL returned", not "it is true"."""
     raw = fetcher(url)
     title, text = html_to_text(raw.decode("utf-8", errors="replace"))
+    _keep(store, content_sha(raw), text)
     return store.add(Claim(
         text=f"{title or url} said: {text[:excerpt_chars]}",
         origin="DATA", confidence=1.0, source=url,

@@ -1,0 +1,62 @@
+{
+  "number": 38,
+  "started": "2026-09-21T02:35:35.118060+00:00",
+  "engine": "session",
+  "observations": {
+    "reports_registered": 0,
+    "monads": 26,
+    "claims": 90,
+    "skills": 9,
+    "active_skills": 9,
+    "agents": 0,
+    "products": 1,
+    "git_head": "e639bf8",
+    "usage": {
+      "mizan": {
+        "claims": 5,
+        "with_source_pct": 100,
+        "contradictions": 0,
+        "per_week": 35.0,
+        "since": "2026-09-20"
+      }
+    },
+    "sources": {
+      "https://tanzil.net/docs/quran_text_types": "unchanged",
+      "https://docs.python.org/3/whatsnew/index.html": "unchanged",
+      "https://tanzil.net/docs/download": "unchanged",
+      "https://tanzil.net/updates/": "unchanged"
+    },
+    "unknowns_resolved": 3,
+    "unverified_principles": 0,
+    "judged_sources": 3
+  },
+  "unknowns": [],
+  "capability_gaps": [],
+  "contradictions": 0,
+  "stale_claims": 0,
+  "products": [
+    {
+      "name": "mizan",
+      "stage": "DEPLOYMENT",
+      "outcome": "UNKNOWN"
+    }
+  ],
+  "blocked": [],
+  "learned": [
+    "constitutional self-check: VALID"
+  ],
+  "next_step": "judge what this source said (needs Engine): https://docs.python.org/3/whatsnew/index.html — `python3 -m monad claim DATA <url> <what it states> --evidence <raw claim id> --tags extracted`",
+  "improvement": {
+    "verdict": "INCONCLUSIVE",
+    "reasons": [
+      "judged_sources: regressed by 1",
+      "mixed result: needs a human or a sharper metric"
+    ],
+    "deltas": {
+      "judged_sources": -1,
+      "unknowns_resolved": 1
+    }
+  },
+  "did_real_work": true,
+  "finished": "2026-09-21T02:35:36.677886+00:00"
+}

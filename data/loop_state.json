@@ -1,18 +1,18 @@
 {
-  "iterations": 36,
+  "iterations": 39,
   "last": {
-    "number": 36,
-    "started": "2026-09-21T01:32:37.658699+00:00",
+    "number": 39,
+    "started": "2026-09-21T02:36:06.631579+00:00",
     "engine": "session",
     "observations": {
       "reports_registered": 0,
-      "monads": 25,
-      "claims": 86,
+      "monads": 26,
+      "claims": 91,
       "skills": 9,
       "active_skills": 9,
       "agents": 0,
       "products": 1,
-      "git_head": "34fd5df",
+      "git_head": "e639bf8",
       "usage": {
         "mizan": {
           "claims": 5,
@@ -28,13 +28,11 @@
         "https://tanzil.net/docs/download": "unchanged",
         "https://tanzil.net/updates/": "unchanged"
       },
-      "unknowns_resolved": 2,
+      "unknowns_resolved": 3,
       "unverified_principles": 0,
       "judged_sources": 4
     },
-    "unknowns": [
-      "نامعلوم: در صفحهٔ docs.python.org دقیقاً چه چیزی تغییر کرد؟ طول متن در هر شش نسخه ۱۴۴۴۴ نویسه مانده و چکیدهٔ ۵۰۰ نویسه‌ای یکسان است، ولی هش متن فرق دارد. مناد متن کامل نسخهٔ پیشین را نگه نمی‌دارد، پس تفاوت را نمی‌تواند نشان دهد؛ فقط می‌داند که تغییری رخ داده."
-    ],
+    "unknowns": [],
     "capability_gaps": [],
     "contradictions": 0,
     "stale_claims": 0,
@@ -49,15 +47,17 @@
     "learned": [
       "constitutional self-check: VALID"
     ],
-    "next_step": "resolve unknown: نامعلوم: در صفحهٔ docs.python.org دقیقاً چه چیزی تغییر کرد؟ طول متن در هر شش نسخه ۱۴۴۴۴ نویسه مانده و چکیدهٔ ۵۰۰ نویسه‌ا",
+    "next_step": "contradictions/staleness sweep",
     "improvement": {
-      "verdict": "INCONCLUSIVE",
+      "verdict": "DEPLOY",
       "reasons": [
-        "no measurable change"
+        "all measured metrics improved or held"
       ],
-      "deltas": {}
+      "deltas": {
+        "judged_sources": 1
+      }
     },
     "did_real_work": true,
-    "finished": "2026-09-21T01:32:39.332272+00:00"
+    "finished": "2026-09-21T02:36:08.297478+00:00"
   }
 }

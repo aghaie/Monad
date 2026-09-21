@@ -231,12 +231,16 @@ class MonadLoop:
         # A judgement is about the text that was read, not about the URL: when a watched page
         # changes, its newest raw claim has no judgement yet and the source is unjudged again.
         claims = self.knowledge.all()
-        newest = {}
+        newest, sha_of = {}, {}
         for c in claims:
-            if "web_research" in c.tags and c.created >= newest.get(c.source, ("",))[0]:
-                newest[c.source] = (c.created, c.id)
+            if "web_research" in c.tags:
+                sha_of[c.id] = next((t for t in c.tags if t.startswith("sha256:")), "")
+                if c.created >= newest.get(c.source, ("",))[0]:
+                    newest[c.source] = (c.created, sha_of[c.id])
+        # keyed by the text's hash, not by the fetch: re-reading the same page is not a new
+        # version, and a judgement of that text stays valid however often it is fetched.
         judged = {c.source for c in claims if "extracted" in c.tags
-                  and newest.get(c.source, ("", ""))[1] in c.evidence}
+                  and newest.get(c.source, ("", ""))[1] in [sha_of.get(e, "") for e in c.evidence]}
         unjudged = [u for u in sources if u not in judged]
         rec.observations["judged_sources"] = len(sources) - len(unjudged)
         rec.did_real_work = bool(rec.capability_gaps) or bool(rec.products) or bool(sources)

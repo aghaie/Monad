@@ -185,6 +185,11 @@ def test_loop_measures_judged_sources_and_points_at_the_unjudged(tmp_path, monke
     assert "https://b.test/" in r2.next_step and "https://a.test/" not in r2.next_step
     assert L.iteration_metrics(dataclasses.asdict(r2))["judged_sources"] == 1
 
+    # re-reading the same text is not a new version: the judgement still stands.
+    L.MonadLoop(tmp_path).knowledge and read_url(loop.knowledge, "https://a.test/",
+                                                 fetcher=lambda u: b"<p>hello</p>")
+    assert L.MonadLoop(tmp_path).iterate().observations["judged_sources"] == 1
+
     # the page changes: yesterday's judgement was about yesterday's text, so the source
     # counts as unjudged again — otherwise a watched page could change unnoticed for ever.
     monkeypatch.setattr(L, "fetch", lambda url: b"<p>hello, and something new</p>")
@@ -220,3 +225,15 @@ def test_a_changed_page_asks_a_new_question_instead_of_reusing_yesterdays_answer
     extracted = [c for c in store.all() if "extracted" in c.tags]
     assert extracted == []                        # nothing judged: the new text was never seen
     assert len(L.MonadLoop(tmp_path).engine.pending()) == 1   # it is asked about, not assumed
+
+
+def test_read_url_keeps_the_full_text_so_a_change_can_be_shown(tmp_path):
+    """Knowing *that* a page changed is not knowing *what* changed. Each version's full text
+    is kept next to the store, and the two newest can be diffed."""
+    from monad.web import versions_diff
+    ks = KnowledgeStore(tmp_path / "data" / "k.jsonl")
+    read_url(ks, "https://a.test/", fetcher=lambda u: b"<p>one</p><p>same</p>")
+    assert versions_diff(ks, "https://a.test/") == ""          # only one version: nothing to show
+    read_url(ks, "https://a.test/", fetcher=lambda u: b"<p>two</p><p>same</p>")
+    d = versions_diff(ks, "https://a.test/")
+    assert "-one same" in d and "+two same" in d
