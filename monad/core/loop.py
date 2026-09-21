@@ -153,8 +153,14 @@ class MonadLoop:
         if self.engine.name == "null":
             return
         _, text = html_to_text(raw.decode("utf-8", errors="replace"))
+        # The question carries the version of the page it is about. An engine that remembers
+        # answers by question (SessionEngine does) would otherwise hand back yesterday's answer
+        # for a page that changed past the excerpt — a judgement of text nobody judged.
+        # ponytail: the engine still sees only the first 6000 chars; widen it if a source's tail
+        # ever carries the news.
+        prompt = f"[{content_sha(raw)}] {text[:6000]}"
         try:
-            reply = self.engine.complete(text[:6000], system=self.JUDGE_SYSTEM)
+            reply = self.engine.complete(prompt, system=self.JUDGE_SYSTEM)
             statements = json.loads(reply[reply.find("["):reply.rfind("]") + 1])
         except Pending:  # asked, not answered yet: counted once, by identify_capability_gaps.
             return       # An async engine answers after this run, so the extraction waits for

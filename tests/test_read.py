@@ -191,3 +191,32 @@ def test_loop_measures_judged_sources_and_points_at_the_unjudged(tmp_path, monke
     r3 = L.MonadLoop(tmp_path).iterate()
     assert r3.observations["judged_sources"] == 0
     assert "https://a.test/" in r3.next_step
+
+
+def test_a_changed_page_asks_a_new_question_instead_of_reusing_yesterdays_answer(tmp_path, monkeypatch):
+    """The engine is asked about the first 6000 chars, but a page can change after them.
+    The question must be tied to the version that was read, or a stale answer is filed as a
+    fresh judgement of text nobody judged."""
+    from monad.core import loop as L
+    from monad.core.engine import answer
+    monkeypatch.setenv("MONAD_ENGINE", "session")
+    monkeypatch.setenv("MONAD_QA", str(tmp_path / "qa.jsonl"))
+    monkeypatch.setattr(L, "REQUIRED_SKILLS", [])
+    (tmp_path / "data").mkdir()
+    (tmp_path / "data" / "sources.txt").write_text("https://a.test/\n")
+    head = "<p>" + "x " * 4000 + "</p>"
+    page = {"html": head + "<p>tail one</p>"}
+    monkeypatch.setattr(L, "fetch", lambda url: page["html"].encode())
+
+    loop = L.MonadLoop(tmp_path)
+    loop.iterate()
+    asked = loop.engine.pending()
+    assert len(asked) == 1
+    answer(loop.engine.path, asked[0]["id"], '["the page states one"]')
+
+    page["html"] = head + "<p>tail two</p>"      # changes only past the 6000-char window
+    L.MonadLoop(tmp_path).iterate()
+    store = L.MonadLoop(tmp_path).knowledge
+    extracted = [c for c in store.all() if "extracted" in c.tags]
+    assert extracted == []                        # nothing judged: the new text was never seen
+    assert len(L.MonadLoop(tmp_path).engine.pending()) == 1   # it is asked about, not assumed
